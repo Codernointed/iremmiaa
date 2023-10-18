@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:rebook/home_page.dart';
 import 'dart:convert';
 
 class AuthenticateSolo1Widget extends StatefulWidget {
@@ -18,7 +19,7 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
   final passwordLoginController = TextEditingController();
   bool passwordLoginVisibility = true;
 
-  // Function to log in and obtain an access token from stack overflow
+  // Function to log in and obtain an access token
   Future<String?> logInAndGetAccessToken(String email, String password) async {
     final apiUrl = Uri.parse(
         'https://ethenatx.pythonanywhere.com/management/obtain-token/');
@@ -27,9 +28,6 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
       final response = await http.post(apiUrl,
           headers: {
             'Content-Type': 'application/json; charset=UTF-8',
-            // 'Accept ': 'application/json',
-            // lemon@yahoo.com
-            // 123
           },
           body: jsonEncode({
             'email': email,
@@ -37,12 +35,10 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
           }));
 
       if (response.statusCode == 200) {
-        // Authentication successful jsonDecode
         final jsonResponse = json.decode(response.body) as Map<String, dynamic>;
         final accessToken = jsonResponse['access'];
         return accessToken;
       } else {
-        // Authentication failed
         return null;
       }
     } catch (e) {
@@ -59,14 +55,18 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
     final accessToken = await logInAndGetAccessToken(email, password);
 
     if (accessToken != null) {
-      // Authentication successful
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Login Successful!'),
         ),
       );
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => HomePage(accessToken: accessToken),
+        ),
+      );
     } else {
-      // Authentication failed
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Login Failed. Please check your credentials.'),
@@ -88,14 +88,10 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
               height: MediaQuery.of(context).size.height,
               decoration: const BoxDecoration(
                 image: DecorationImage(
-                    fit: BoxFit.cover,
-                    image: AssetImage(
-                      'assets/marcus-loke-WQJvWU_HZFo-unsplash.jpg',
-                    )
-                    // NetworkImage(
-                    //   'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1469&q=80+',
-                    // ),
-                    ),
+                  fit: BoxFit.cover,
+                  image:
+                      AssetImage('assets/marcus-loke-WQJvWU_HZFo-unsplash.jpg'),
+                ),
               ),
               child: Center(
                 child: Container(
@@ -139,8 +135,7 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
                                     indicator: BoxDecoration(
                                       border: Border(
                                         bottom: BorderSide(
-                                          color: Color(
-                                              0xFFF59B15), // Change tab underline color
+                                          color: Color(0xFFF59B15),
                                           width: 3.0,
                                         ),
                                       ),
@@ -202,6 +197,8 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
                                                         'Helvetica Neue',
                                                   ),
                                                   maxLines: null,
+                                                  cursorColor:
+                                                      Color(0xFFF59B15),
                                                 ),
                                               ),
                                               Padding(
@@ -258,6 +255,8 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
                                                     fontSize: 18,
                                                   ),
                                                   maxLines: 1,
+                                                  cursorColor:
+                                                      Color(0xFFF59B15),
                                                 ),
                                               ),
                                               Padding(
@@ -299,13 +298,11 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
                                           ),
                                         ),
                                       ),
-                                      Container(
-                                        child: Text(
-                                          "Under Development(Enoch said not yet)",
+                                      const SizedBox(
+                                        child: const Text(
+                                          'Still under development, Enoch said not yet',
                                           style: TextStyle(
-                                            fontSize: 22,
-                                            fontFamily: 'Roboto',
-                                            fontWeight: FontWeight.w200,
+                                            fontSize: 28,
                                             color: Color(0xFFF59B15),
                                           ),
                                         ),
