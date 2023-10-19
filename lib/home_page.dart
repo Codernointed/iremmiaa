@@ -6,7 +6,7 @@ class HomePage extends StatelessWidget {
 
   HomePage({required this.accessToken});
 
-  Widget _buildCard(String text, String imageUrl) {
+  Widget _buildCard(String text, String imageLoc) {
     return Padding(
       padding: EdgeInsets.fromLTRB(30, 10, 30, 10),
       child: Container(
@@ -15,7 +15,7 @@ class HomePage extends StatelessWidget {
           image: DecorationImage(
             fit: BoxFit.cover,
             alignment: Alignment(0.00, 0.00),
-            image: NetworkImage(imageUrl),
+            image: AssetImage(imageLoc),
           ),
           gradient: LinearGradient(
             colors: [Colors.black, Colors.black],
@@ -63,62 +63,78 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.start,
+      appBar: AppBar(
+        shadowColor: Colors.white,
+        backgroundColor: Colors.white,
+        leading: Padding(
+          padding: const EdgeInsets.all(10.0), // Adjust padding as needed
+          child: IconButton(
+            icon: Icon(Icons.arrow_back, color: Color(0xFFF59B15)),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ),
+        title: Row(
           children: [
-            Align(
-              alignment: Alignment(-1.00, 0.00),
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(35, 30, 0, 30),
-                child: Text(
-                  'Welcome',
-                  style: TextStyle(
-                    fontFamily: 'Roboto',
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFFF59B15),
-                    fontSize: 25,
-                  ),
-                ),
+            SizedBox(width: 0), // Adjust the width as needed
+            Text(
+              'Welcome',
+              style: TextStyle(
+                fontFamily: 'Roboto',
+                fontWeight: FontWeight.w600,
+                color: Color(0xFFF59B15),
+                fontSize: 25,
               ),
             ),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    _buildCard(
-                      'Update Room Prices',
-                      'assets/prices.jpg',
+          ],
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+                0, 0, 30, 0), // Adjust padding as needed
+            child: IconButton(
+              icon: Icon(Icons.account_circle,
+                  color: Color(0xFFF59B15), size: 35),
+              onPressed: () {
+                // Add an action to navigate to the profile page here.
+              },
+            ),
+          ),
+        ],
+      ),
+      body: SafeArea(
+        child: ListView(
+          children: [
+            SizedBox(height: 20), // Add spacing between AppBar and content
+            _buildCard(
+              'Update Room Prices',
+              'assets/price.jpg',
+            ),
+            GestureDetector(
+              onTap: () {
+                // Navigate to RoomDetailsPage
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => RoomDetailsPage(
+                      accessToken: accessToken,
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        // Navigate to RoomDetailsPage
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => RoomDetailsPage(
-                              accessToken: accessToken,
-                            ),
-                          ),
-                        );
-                      },
-                      child: _buildCard(
-                        'Update Rooms Details',
-                        'assets/details.jpg',
-                      ),
-                    ),
-                    _buildCard(
-                      'View Tenants',
-                      'assets/view.jpg',
-                    ),
-                    _buildCard(
-                      'Verify Tenants',
-                      'assets/verify.jpg',
-                    ),
-                  ],
-                ),
+                  ),
+                );
+              },
+              child: _buildCard(
+                'Update Rooms Details',
+                'assets/details.jpg',
               ),
+            ),
+            _buildCard(
+              'View Tenants',
+              'assets/view.jpg',
+            ),
+            _buildCard(
+              'Verify Tenants',
+              'assets/verify.jpg',
             ),
           ],
         ),

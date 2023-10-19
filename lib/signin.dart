@@ -18,6 +18,7 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
   final emailAddressLoginController = TextEditingController();
   final passwordLoginController = TextEditingController();
   bool passwordLoginVisibility = true;
+  bool isLoading = false;
 
   // Function to log in and obtain an access token
   Future<String?> logInAndGetAccessToken(String email, String password) async {
@@ -37,6 +38,7 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body) as Map<String, dynamic>;
         final accessToken = jsonResponse['access'];
+        print(accessToken);
         return accessToken;
       } else {
         return null;
@@ -52,7 +54,15 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
     final email = emailAddressLoginController.text;
     final password = passwordLoginController.text;
 
+    setState(() {
+      isLoading = true;
+    });
+
     final accessToken = await logInAndGetAccessToken(email, password);
+
+    setState(() {
+      isLoading = false;
+    });
 
     if (accessToken != null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -294,6 +304,13 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
                                                   ),
                                                 ),
                                               ),
+                                              if (isLoading)
+                                                Center(
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                    color: Color(0xFFF59B15),
+                                                  ),
+                                                ),
                                             ],
                                           ),
                                         ),
