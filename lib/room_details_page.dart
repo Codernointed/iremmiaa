@@ -41,8 +41,8 @@ class RoomDetailsPage extends StatelessWidget {
         final room = Room.fromJson(roomJson);
         rooms.add(room);
       }
-      print('Response body: ${response.body}');
-      print('Status code: ${response.statusCode}');
+      // print('Response body: ${response.body}');
+      // print('Status code: ${response.statusCode}');
 
       return rooms;
     } else {
