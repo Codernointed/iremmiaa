@@ -66,33 +66,34 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         shadowColor: Colors.white,
         backgroundColor: Colors.white,
-        leading: Padding(
-          padding: const EdgeInsets.all(10.0), // Adjust padding as needed
-          child: IconButton(
-            icon: Icon(Icons.arrow_back, color: Color(0xFFF59B15)),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ),
+        // leading: Padding(
+        //   padding: const EdgeInsets.all(10.0), // Adjust padding as needed
+        //   child: IconButton(
+        //     icon: Icon(Icons.arrow_back, color: Color(0xFFF59B15)),
+        //     onPressed: () {
+        //       Navigator.of(context).pop();
+        //     },
+        //   ),
+        // ),
         title: Row(
           children: [
-            SizedBox(width: 0), // Adjust the width as needed
-            Text(
-              'Welcome',
-              style: TextStyle(
-                fontFamily: 'Roboto',
-                fontWeight: FontWeight.w600,
-                color: Color(0xFFF59B15),
-                fontSize: 25,
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+              child: Text(
+                'Welcome',
+                style: TextStyle(
+                  fontFamily: 'Roboto',
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFFF59B15),
+                  fontSize: 25,
+                ),
               ),
             ),
           ],
         ),
         actions: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(
-                0, 0, 30, 0), // Adjust padding as needed
+            padding: const EdgeInsets.fromLTRB(0, 0, 30, 0),
             child: IconButton(
               icon: Icon(Icons.account_circle,
                   color: Color(0xFFF59B15), size: 35),

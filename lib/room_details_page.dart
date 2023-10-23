@@ -23,6 +23,7 @@ class RoomDetailsPage extends StatelessWidget {
   //     throw Exception('Failed to load rooms');
   //   }
   // }
+
   Future<List<Room>> fetchRooms() async {
     final response = await http.get(
       Uri.parse('https://ethenatx.pythonanywhere.com/management/rooms/'),
@@ -138,7 +139,7 @@ class Room {
     return Room(
       roomNo: json['room_no'] ?? '',
       roomCapacity: json['room_capacity'] ?? 0,
-      roomPrice: double.parse(json['room_price']) ?? 0.0,
+      roomPrice: double.parse(json['room_price']),
       occupied: json['occupied'] ?? false,
     );
   }
@@ -172,7 +173,7 @@ class RoomCard extends StatelessWidget {
             ),
             const SizedBox(height: 8.0),
             Text('Capacity: ${room.roomCapacity}'),
-            Text('Price: \$${room.roomPrice.toStringAsFixed(2)}'),
+            Text('Price: GH₵${room.roomPrice.toStringAsFixed(2)}'),
             Text('Occupied: ${room.occupied ? 'Yes' : 'No'}'),
           ],
         ),
