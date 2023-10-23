@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:rebook/home_page.dart';
@@ -7,6 +9,7 @@ class AuthenticateSolo1Widget extends StatefulWidget {
   const AuthenticateSolo1Widget({Key? key}) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _AuthenticateSolo1WidgetState createState() =>
       _AuthenticateSolo1WidgetState();
 }
@@ -208,7 +211,7 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
                                                   ),
                                                   maxLines: null,
                                                   cursorColor:
-                                                      Color(0xFFF59B15),
+                                                      const Color(0xFFF59B15),
                                                 ),
                                               ),
                                               Padding(
@@ -266,7 +269,7 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
                                                   ),
                                                   maxLines: 1,
                                                   cursorColor:
-                                                      Color(0xFFF59B15),
+                                                      const Color(0xFFF59B15),
                                                 ),
                                               ),
                                               Padding(
@@ -305,7 +308,7 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
                                                 ),
                                               ),
                                               if (isLoading)
-                                                Center(
+                                                const Center(
                                                   child:
                                                       CircularProgressIndicator(
                                                     color: Color(0xFFF59B15),
@@ -316,7 +319,7 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
                                         ),
                                       ),
                                       const SizedBox(
-                                        child: const Text(
+                                        child: Text(
                                           'Still under development, Enoch said not yet',
                                           style: TextStyle(
                                             fontSize: 28,

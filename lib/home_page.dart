@@ -4,20 +4,20 @@ import 'package:rebook/room_details_page.dart';
 class HomePage extends StatelessWidget {
   final String accessToken;
 
-  HomePage({required this.accessToken});
+  const HomePage({super.key, required this.accessToken});
 
   Widget _buildCard(String text, String imageLoc) {
     return Padding(
-      padding: EdgeInsets.fromLTRB(30, 10, 30, 10),
+      padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
       child: Container(
         height: 110,
         decoration: BoxDecoration(
           image: DecorationImage(
             fit: BoxFit.cover,
-            alignment: Alignment(0.00, 0.00),
+            alignment: const Alignment(0.00, 0.00),
             image: AssetImage(imageLoc),
           ),
-          gradient: LinearGradient(
+          gradient: const LinearGradient(
             colors: [Colors.black, Colors.black],
             stops: [0, 1],
             begin: Alignment(1, 0),
@@ -30,7 +30,7 @@ class HomePage extends StatelessWidget {
             Opacity(
               opacity: 0.5,
               child: Align(
-                alignment: Alignment(0.00, 0.00),
+                alignment: const Alignment(0.00, 0.00),
                 child: Container(
                   width: double.infinity,
                   height: double.infinity,
@@ -42,10 +42,10 @@ class HomePage extends StatelessWidget {
               ),
             ),
             Align(
-              alignment: Alignment(0.00, 0.00),
+              alignment: const Alignment(0.00, 0.00),
               child: Text(
                 text,
-                style: TextStyle(
+                style: const TextStyle(
                   fontFamily: 'Readex Pro',
                   color: Colors.white,
                   fontSize: 25,
@@ -66,27 +66,24 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         shadowColor: Colors.white,
         backgroundColor: Colors.white,
-        // leading: Padding(
-        //   padding: const EdgeInsets.all(10.0), // Adjust padding as needed
-        //   child: IconButton(
-        //     icon: Icon(Icons.arrow_back, color: Color(0xFFF59B15)),
-        //     onPressed: () {
-        //       Navigator.of(context).pop();
-        //     },
-        //   ),
-        // ),
-        title: Row(
+        leading: Padding(
+          padding: const EdgeInsets.all(10.0), // Adjust padding as needed
+          child: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Color(0xFFF59B15)),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ),
+        title: const Row(
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-              child: Text(
-                'Welcome',
-                style: TextStyle(
-                  fontFamily: 'Roboto',
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFFF59B15),
-                  fontSize: 25,
-                ),
+            Text(
+              'Welcome',
+              style: TextStyle(
+                fontFamily: 'Roboto',
+                fontWeight: FontWeight.w600,
+                color: Color(0xFFF59B15),
+                fontSize: 25,
               ),
             ),
           ],
@@ -95,7 +92,7 @@ class HomePage extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(0, 0, 30, 0),
             child: IconButton(
-              icon: Icon(Icons.account_circle,
+              icon: const Icon(Icons.account_circle,
                   color: Color(0xFFF59B15), size: 35),
               onPressed: () {
                 // Add an action to navigate to the profile page here.
@@ -107,7 +104,8 @@ class HomePage extends StatelessWidget {
       body: SafeArea(
         child: ListView(
           children: [
-            SizedBox(height: 20), // Add spacing between AppBar and content
+            const SizedBox(
+                height: 20), // Add spacing between AppBar and content
             _buildCard(
               'Update Room Prices',
               'assets/price.jpg',

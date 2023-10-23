@@ -10,12 +10,12 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
       title: _title,
       color: Color(0xFFF59B15),
       // home: LoginScreen(),
-      home: const AuthenticateSolo1Widget(),
+      home: AuthenticateSolo1Widget(),
     );
   }
 }
