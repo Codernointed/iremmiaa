@@ -41,7 +41,7 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body) as Map<String, dynamic>;
         final accessToken = jsonResponse['access'];
-        // print(accessToken);
+        print(accessToken);
         return accessToken;
       } else {
         return null;

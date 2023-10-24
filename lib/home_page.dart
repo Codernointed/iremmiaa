@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rebook/room_details_page.dart';
+import 'package:rebook/pages/room_details_page.dart';
 
 class HomePage extends StatelessWidget {
   final String accessToken;
