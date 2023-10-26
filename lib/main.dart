@@ -14,9 +14,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: _title,
       theme: ThemeData(
-        primarySwatch: MaterialColor(
+        primarySwatch: const MaterialColor(
           0xFFF59B15,
-          const <int, Color>{
+          <int, Color>{
             50: Color(0xFFFFF7F7),
             100: Color(0xFFFFE8E8),
             200: Color(0xFFFFD9D9),

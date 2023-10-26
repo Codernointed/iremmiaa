@@ -9,7 +9,6 @@ class AuthenticateSolo1Widget extends StatefulWidget {
   const AuthenticateSolo1Widget({Key? key}) : super(key: key);
 
   @override
-  // ignore: library_private_types_in_public_api
   _AuthenticateSolo1WidgetState createState() =>
       _AuthenticateSolo1WidgetState();
 }
@@ -109,7 +108,7 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
               child: Center(
                 child: Container(
                   width: 290,
-                  height: 420,
+                  height: 520,
                   decoration: BoxDecoration(
                     color: const Color(0x99000000),
                     borderRadius: BorderRadius.circular(15.0),
@@ -128,7 +127,7 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
                                 "Guudnyt",
                                 style: TextStyle(
                                   fontSize: 38,
-                                  fontFamily: 'Roboto',
+                                  fontFamily: 'Poppins',
                                   fontWeight: FontWeight.w700,
                                   color: Color(0xFFF59B15),
                                 ),
@@ -145,14 +144,8 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
                                 const Align(
                                   alignment: Alignment(0, 0),
                                   child: TabBar(
-                                    indicator: BoxDecoration(
-                                      border: Border(
-                                        bottom: BorderSide(
-                                          color: Color(0xFFF59B15),
-                                          width: 3.0,
-                                        ),
-                                      ),
-                                    ),
+                                    labelColor: Colors.white,
+                                    unselectedLabelColor: Color(0xffd7d7d7),
                                     tabs: [
                                       Tab(
                                         text: 'Sign In',
@@ -165,168 +158,133 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
                                 ),
                                 Expanded(
                                   child: TabBarView(
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
                                     children: [
-                                      Padding(
+                                      Container(
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 20.0),
-                                        child: SingleChildScrollView(
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.max,
-                                            children: [
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    top: 20.0),
-                                                child: TextFormField(
-                                                  controller:
-                                                      emailAddressLoginController,
-                                                  obscureText: false,
-                                                  decoration:
-                                                      const InputDecoration(
-                                                    labelText: 'Email Address',
-                                                    labelStyle: TextStyle(
-                                                      color: Color(0xffdedddb),
-                                                      fontSize: 18,
-                                                      fontFamily: 'Roboto',
-                                                    ),
-                                                    focusedBorder:
-                                                        UnderlineInputBorder(
-                                                      borderSide: BorderSide(
-                                                        color:
-                                                            Color(0xFFF59B15),
-                                                      ),
-                                                    ),
-                                                    enabledBorder:
-                                                        UnderlineInputBorder(
-                                                      borderSide: BorderSide(
-                                                        color:
-                                                            Color(0xFFF59B15),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  style: const TextStyle(
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.max,
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 20.0),
+                                              child: TextFormField(
+                                                controller:
+                                                    emailAddressLoginController,
+                                                obscureText: false,
+                                                decoration:
+                                                    const InputDecoration(
+                                                  labelText: 'Email Address',
+                                                  labelStyle: TextStyle(
                                                     color: Color(0xffdedddb),
                                                     fontSize: 18,
-                                                    fontFamily:
-                                                        'Helvetica Neue',
+                                                    fontFamily: 'Poppins',
                                                   ),
-                                                  maxLines: null,
-                                                  cursorColor:
-                                                      const Color(0xFFF59B15),
+                                                  enabledBorder:
+                                                      UnderlineInputBorder(
+                                                    borderSide: BorderSide(
+                                                      color: Color(0xFFF59B15),
+                                                    ),
+                                                  ),
                                                 ),
+                                                style: const TextStyle(
+                                                  color: Color(0xffdedddb),
+                                                  fontSize: 18,
+                                                  fontFamily: 'Poppins',
+                                                ),
+                                                maxLines: null,
                                               ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    top: 12.0),
-                                                child: TextFormField(
-                                                  controller:
-                                                      passwordLoginController,
-                                                  obscureText:
-                                                      passwordLoginVisibility,
-                                                  decoration: InputDecoration(
-                                                    labelText: 'Password',
-                                                    labelStyle: const TextStyle(
-                                                      color: Color(0xffdedddb),
-                                                      fontSize: 18,
-                                                      fontFamily:
-                                                          'Helvetica Neue',
-                                                    ),
-                                                    suffixIcon: InkWell(
-                                                      onTap: () {
-                                                        setState(() {
-                                                          passwordLoginVisibility =
-                                                              !passwordLoginVisibility;
-                                                        });
-                                                      },
-                                                      child: Icon(
-                                                        passwordLoginVisibility
-                                                            ? Icons
-                                                                .visibility_outlined
-                                                            : Icons
-                                                                .visibility_off_outlined,
-                                                        size: 20,
-                                                        color: const Color(
-                                                            0xffdedddb),
-                                                      ),
-                                                    ),
-                                                    focusedBorder:
-                                                        const UnderlineInputBorder(
-                                                      borderSide: BorderSide(
-                                                        color:
-                                                            Color(0xFFF59B15),
-                                                      ),
-                                                    ),
-                                                    enabledBorder:
-                                                        const UnderlineInputBorder(
-                                                      borderSide: BorderSide(
-                                                        color:
-                                                            Color(0xFFF59B15),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  style: const TextStyle(
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 12.0),
+                                              child: TextFormField(
+                                                controller:
+                                                    passwordLoginController,
+                                                obscureText:
+                                                    passwordLoginVisibility,
+                                                decoration: InputDecoration(
+                                                  labelText: 'Password',
+                                                  labelStyle: const TextStyle(
                                                     color: Color(0xffdedddb),
                                                     fontSize: 18,
+                                                    fontFamily: 'Poppins',
                                                   ),
-                                                  maxLines: 1,
-                                                  cursorColor:
-                                                      const Color(0xFFF59B15),
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    top: 24.0),
-                                                child: ElevatedButton(
-                                                  onPressed: handleLogin,
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                    backgroundColor:
-                                                        const Color(0xFFf59b15),
+                                                  suffixIcon: InkWell(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        passwordLoginVisibility =
+                                                            !passwordLoginVisibility;
+                                                      });
+                                                    },
+                                                    child: Icon(
+                                                      passwordLoginVisibility
+                                                          ? Icons
+                                                              .visibility_outlined
+                                                          : Icons
+                                                              .visibility_off_outlined,
+                                                      size: 20,
+                                                      color: const Color(
+                                                          0xffdedddb),
+                                                    ),
                                                   ),
-                                                  child: const Text(
-                                                    'Login',
-                                                    style: TextStyle(
-                                                      fontSize: 18,
-                                                      color: Colors.white,
+                                                  enabledBorder:
+                                                      const UnderlineInputBorder(
+                                                    borderSide: BorderSide(
+                                                      color: Color(0xFFF59B15),
                                                     ),
                                                   ),
                                                 ),
+                                                style: const TextStyle(
+                                                  color: Color(0xffdedddb),
+                                                  fontSize: 18,
+                                                ),
+                                                maxLines: 1,
                                               ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    top: 20.0),
-                                                child: TextButton(
-                                                  onPressed: () {
-                                                    // Navigate to forgot password screen
-                                                  },
-                                                  child: const Text(
-                                                    'Forgot Password?',
-                                                    style: TextStyle(
-                                                      fontSize: 18,
-                                                      color: Colors.white,
-                                                    ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 24.0),
+                                              child: ElevatedButton(
+                                                onPressed: handleLogin,
+                                                child: const Text(
+                                                  'Login',
+                                                  style: TextStyle(
+                                                    fontSize: 18,
+                                                    color: Colors.white,
                                                   ),
                                                 ),
                                               ),
-                                              if (isLoading)
-                                                const Center(
-                                                  child:
-                                                      CircularProgressIndicator(
-                                                    color: Color(0xFFF59B15),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 20.0),
+                                              child: TextButton(
+                                                onPressed: () {
+                                                  // Navigate to the forgot password screen
+                                                },
+                                                child: const Text(
+                                                  'Forgot Password?',
+                                                  style: TextStyle(
+                                                    fontSize: 18,
+                                                    color: Colors.white,
                                                   ),
                                                 ),
-                                            ],
-                                          ),
+                                              ),
+                                            ),
+                                            if (isLoading)
+                                              const Center(
+                                                child:
+                                                    CircularProgressIndicator(
+                                                  color: Color(0xFFF59B15),
+                                                ),
+                                              ),
+                                          ],
                                         ),
                                       ),
-                                      const SizedBox(
-                                        child: Text(
-                                          'Still under development, Enoch said not yet',
-                                          style: TextStyle(
-                                            fontSize: 28,
-                                            color: Color(0xFFF59B15),
-                                          ),
-                                        ),
-                                      ), // Empty container for Sign Up tab
+                                      const SizedBox(), // Empty container for Sign Up tab
                                     ],
                                   ),
                                 ),

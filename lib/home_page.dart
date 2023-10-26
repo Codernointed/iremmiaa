@@ -80,7 +80,7 @@ class HomePage extends StatelessWidget {
             Text(
               'Welcome',
               style: TextStyle(
-                fontFamily: 'Roboto',
+                fontFamily: 'Poppins',
                 fontWeight: FontWeight.w600,
                 color: Color(0xFFF59B15),
                 fontSize: 25,
