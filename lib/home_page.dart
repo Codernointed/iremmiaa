@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rebook/pages/room_details_page.dart';
+import 'package:rebook/pages/room_prices_page.dart';
 
 class HomePage extends StatelessWidget {
   final String accessToken;
@@ -106,9 +107,23 @@ class HomePage extends StatelessWidget {
           children: [
             const SizedBox(
                 height: 20), // Add spacing between AppBar and content
-            _buildCard(
-              'Update Room Prices',
-              'assets/price.jpg',
+
+            GestureDetector(
+              onTap: () {
+                // Navigate to RoomDetailsPage
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => RoomPricesPage(
+                      accessToken: accessToken,
+                    ),
+                  ),
+                );
+              },
+              child: _buildCard(
+                'Update Room Prices',
+                'assets/price.jpg',
+              ),
             ),
             GestureDetector(
               onTap: () {

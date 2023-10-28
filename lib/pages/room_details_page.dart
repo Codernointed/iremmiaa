@@ -9,16 +9,36 @@ class RoomDetailsPage extends StatefulWidget {
       : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _RoomDetailsPageState createState() => _RoomDetailsPageState();
 }
 
 class _RoomDetailsPageState extends State<RoomDetailsPage> {
+  String searchText = '';
+  int selectedCapacity = 0;
+  bool showOccupiedOnly = false;
+
   List<Room> rooms = [];
+  List<Room> filteredRooms = [];
 
   @override
   void initState() {
     super.initState();
     fetchRooms();
+  }
+
+  void filterRooms() {
+    setState(() {
+      filteredRooms = rooms.where((room) {
+        final matchesSearch =
+            room.roomNo.toLowerCase().contains(searchText.toLowerCase());
+        final matchesCapacity =
+            selectedCapacity == 0 || room.roomCapacity == selectedCapacity;
+        final matchesOccupancy = !showOccupiedOnly || room.occupied;
+
+        return matchesSearch && matchesCapacity && matchesOccupancy;
+      }).toList();
+    });
   }
 
   Future<void> fetchRooms() async {
@@ -31,7 +51,9 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
 
     if (response.statusCode == 200) {
       final List<dynamic> roomData = json.decode(response.body);
+
       rooms = roomData.map((roomJson) => Room.fromJson(roomJson)).toList();
+      filteredRooms = List.from(rooms);
       setState(() {});
     } else {
       throw Exception('Failed to load rooms');
@@ -52,6 +74,7 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        shadowColor: Colors.white,
         backgroundColor: Colors.white,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Color(0xFFF59B15)),
@@ -81,26 +104,97 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
           ),
         ],
       ),
-      body: rooms.isEmpty
-          ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                ),
-                itemCount: rooms.length,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return RoomCard(
-                    room: rooms[index],
-                    onEdit: (room) => _showEditRoomDialog(context, room),
-                    accessToken: widget.accessToken,
-                    updateRoom: updateRoom,
-                  );
-                },
-              ),
+      body: Column(
+        children: [
+          _buildSearchBar(),
+          _buildFilter(),
+          Expanded(
+            child: filteredRooms.isEmpty
+                ? const Center(child: Text('No rooms match your criteria.'))
+                : _buildRoomGridView(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSearchBar() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TextField(
+        onChanged: (value) {
+          setState(() {
+            searchText = value;
+            filterRooms();
+          });
+        },
+        decoration: InputDecoration(
+          hintText: 'Search by Room No',
+          prefixIcon: const Icon(Icons.search),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFilter() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        // Filter by Capacity
+        DropdownButton<int>(
+          value: selectedCapacity,
+          onChanged: (value) {
+            setState(() {
+              selectedCapacity = value!;
+              filterRooms();
+            });
+          },
+          items: <DropdownMenuItem<int>>[
+            const DropdownMenuItem<int>(
+              value: 0,
+              child: Text('Filter by Capacity'),
             ),
+            for (var capacity in rooms.map((room) => room.roomCapacity).toSet())
+              DropdownMenuItem<int>(
+                value: capacity,
+                child: Text('Capacity $capacity'),
+              ),
+          ],
+        ),
+        // Filter by Occupancy
+        Row(
+          children: [
+            const Text('Occupied Only'),
+            Checkbox(
+              value: showOccupiedOnly,
+              onChanged: (value) {
+                setState(() {
+                  showOccupiedOnly = value ?? false;
+                  filterRooms();
+                });
+              },
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  GridView _buildRoomGridView() {
+    return GridView.builder(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+      ),
+      itemCount: filteredRooms.isEmpty ? rooms.length : filteredRooms.length,
+      shrinkWrap: true,
+      itemBuilder: (context, index) {
+        return RoomCard(
+          room: filteredRooms.isEmpty ? rooms[index] : filteredRooms[index],
+          onEdit: (room) => _showEditRoomDialog(context, room),
+          accessToken: widget.accessToken,
+          updateRoom: updateRoom,
+        );
+      },
     );
   }
 
@@ -116,70 +210,78 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: const Text('Edit Room Details'),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                TextFormField(
-                  controller: roomNoController,
-                  decoration: const InputDecoration(labelText: 'Room No'),
+        return StatefulBuilder(
+          // Use StatefulBuilder for the dialog content
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('Edit Room Details'),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    TextFormField(
+                      controller: roomNoController,
+                      decoration: const InputDecoration(labelText: 'Room No'),
+                    ),
+                    TextFormField(
+                      controller: roomCapacityController,
+                      decoration:
+                          const InputDecoration(labelText: 'Room Capacity'),
+                    ),
+                    TextFormField(
+                      controller: roomPriceController,
+                      decoration:
+                          const InputDecoration(labelText: 'Room Price'),
+                    ),
+                    CheckboxListTile(
+                      title: const Text('Occupied'),
+                      value: isOccupied,
+                      onChanged: (value) {
+                        setState(() {
+                          isOccupied = value ?? false;
+                        });
+                      },
+                    ),
+                  ],
                 ),
-                TextFormField(
-                  controller: roomCapacityController,
-                  decoration: const InputDecoration(labelText: 'Room Capacity'),
-                ),
-                TextFormField(
-                  controller: roomPriceController,
-                  decoration: const InputDecoration(labelText: 'Room Price'),
-                ),
-                CheckboxListTile(
-                  title: const Text('Occupied'),
-                  value: isOccupied,
-                  onChanged: (value) {
-                    setState(() {
-                      isOccupied = value ?? false;
-                    });
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
                   },
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    final updatedRoom = room.copyWith(
+                      roomNo: roomNoController.text,
+                      roomCapacity:
+                          int.tryParse(roomCapacityController.text) ?? 0,
+                      roomPrice: double.parse(roomPriceController.text),
+                      occupied: isOccupied,
+                    );
+
+                    // Update the room details via an API request.
+                    await _updateRoom(updatedRoom, widget.accessToken);
+                    // Update the room details in the cards through the callback.
+                    updateRoom(updatedRoom);
+
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Save'),
                 ),
               ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () async {
-                final updatedRoom = room.copyWith(
-                  roomNo: roomNoController.text,
-                  roomCapacity: int.tryParse(roomCapacityController.text) ?? 0,
-                  roomPrice: double.parse(roomPriceController.text),
-                  occupied: isOccupied,
-                );
-
-                // Update the room details via an API request.
-                await _updateRoom(updatedRoom, widget.accessToken);
-                // Update the room details in the cards through the callback.
-                updateRoom(updatedRoom);
-
-                Navigator.of(context).pop();
-              },
-              child: const Text('Save'),
-            ),
-          ],
+            );
+          },
         );
       },
     );
   }
 
-  Future<void> _updateRoom(Room room, String accessToken) async {
+  Future<void> _updateRoom(Room updatedRoom, String accessToken) async {
     final apiUrl = Uri.parse(
-        'https://ethenatx.pythonanywhere.com/management/room-details/${room.roomId}');
+        'https://ethenatx.pythonanywhere.com/management/room-details/${updatedRoom.roomId}');
     final response = await http.put(
       apiUrl,
       headers: {
@@ -187,18 +289,29 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
         'Authorization': 'Bearer $accessToken',
       },
       body: jsonEncode({
-        'room_no': room.roomNo,
-        'room_capacity': room.roomCapacity,
-        'room_price': room.roomPrice,
-        'occupied': room.occupied,
+        'room_no': updatedRoom.roomNo,
+        'room_capacity': updatedRoom.roomCapacity,
+        'room_price': updatedRoom.roomPrice,
+        'occupied': updatedRoom.occupied,
       }),
     );
 
-    if (response.statusCode != 200) {
-      // Handle the case where the update request fails.
-    } else {
-      print('Response body: ${response.body}');
-    }
+    if (response.statusCode == 200) {
+      // Update the room in the rooms and filteredRooms lists.
+      final index =
+          rooms.indexWhere((room) => room.roomId == updatedRoom.roomId);
+      if (index != -1) {
+        setState(() {
+          rooms[index] = updatedRoom;
+
+          final filteredIndex = filteredRooms
+              .indexWhere((room) => room.roomId == updatedRoom.roomId);
+          if (filteredIndex != -1) {
+            filteredRooms[filteredIndex] = updatedRoom;
+          }
+        });
+      }
+    } else {}
   }
 }
 
@@ -223,8 +336,7 @@ class Room {
       roomCapacity: json['room_capacity'] ?? 0,
       roomPrice: double.parse(json['room_price']),
       occupied: json['occupied'] ?? false,
-      roomId:
-          json['room_id'], // Make sure 'room_id' exists in your API response.
+      roomId: json['room_id'],
     );
   }
 
