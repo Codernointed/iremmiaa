@@ -50,9 +50,12 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
     );
 
     if (response.statusCode == 200) {
+      print("RES: $response.body");
       final List<dynamic> roomData = json.decode(response.body);
+      print("RESpo: $roomData");
 
       rooms = roomData.map((roomJson) => Room.fromJson(roomJson)).toList();
+      print("filter: $rooms");
       filteredRooms = List.from(rooms);
       setState(() {});
     } else {
@@ -205,6 +208,8 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
         TextEditingController(text: room.roomCapacity.toString());
     final TextEditingController roomPriceController =
         TextEditingController(text: room.roomPrice.toString());
+    final TextEditingController roomBedSpaceController =
+        TextEditingController(text: room.roomBedSpace.toString());
     bool isOccupied = room.occupied;
 
     showDialog(
@@ -233,6 +238,11 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
                       decoration:
                           const InputDecoration(labelText: 'Room Price'),
                     ),
+                    TextFormField(
+                      controller: roomPriceController,
+                      decoration:
+                          const InputDecoration(labelText: 'Space Left'),
+                    ),
                     CheckboxListTile(
                       title: const Text('Occupied'),
                       value: isOccupied,
@@ -259,6 +269,8 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
                       roomCapacity:
                           int.tryParse(roomCapacityController.text) ?? 0,
                       roomPrice: double.parse(roomPriceController.text),
+                      roomBedSpace:
+                          int.tryParse(roomBedSpaceController.text) ?? 0,
                       occupied: isOccupied,
                     );
 
@@ -292,6 +304,7 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
         'room_no': updatedRoom.roomNo,
         'room_capacity': updatedRoom.roomCapacity,
         'room_price': updatedRoom.roomPrice,
+        'bed_space_left': updatedRoom.roomBedSpace,
         'occupied': updatedRoom.occupied,
       }),
     );
@@ -319,6 +332,7 @@ class Room {
   final String roomNo;
   final int roomCapacity;
   final double roomPrice;
+  final int roomBedSpace;
   final bool occupied;
   final String roomId;
 
@@ -326,6 +340,7 @@ class Room {
     required this.roomNo,
     required this.roomCapacity,
     required this.roomPrice,
+    required this.roomBedSpace,
     required this.occupied,
     required this.roomId,
   });
@@ -335,6 +350,7 @@ class Room {
       roomNo: json['room_no'] ?? '',
       roomCapacity: json['room_capacity'] ?? 0,
       roomPrice: double.parse(json['room_price']),
+      roomBedSpace: json['bed_space_left'] ?? 0,
       occupied: json['occupied'] ?? false,
       roomId: json['room_id'],
     );
@@ -344,12 +360,14 @@ class Room {
     String? roomNo,
     int? roomCapacity,
     double? roomPrice,
+    int? roomBedSpace,
     bool? occupied,
   }) {
     return Room(
       roomNo: roomNo ?? this.roomNo,
       roomCapacity: roomCapacity ?? this.roomCapacity,
       roomPrice: roomPrice ?? this.roomPrice,
+      roomBedSpace: roomBedSpace ?? this.roomBedSpace,
       occupied: occupied ?? this.occupied,
       roomId: roomId,
     );
@@ -398,6 +416,9 @@ class RoomCard extends StatelessWidget {
               ),
               Flexible(
                 child: Text('Price: GH₵${room.roomPrice.toStringAsFixed(2)}'),
+              ),
+              Flexible(
+                child: Text('Space Left: ${room.roomBedSpace}'),
               ),
               Flexible(
                 child: Text('Occupied: ${room.occupied ? 'Yes' : 'No'}'),

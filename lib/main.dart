@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'signin.dart';
-// import 'login.dart';
+import 'login.dart';
 
 void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
   static const String _title = 'Iremially';
-  // This widget is the root of your application.
+  // This widget is the root of your application.ChJDb250YWluZXJfeWI1M2Uzc2gSzgIKD0NvbHVtbl83d3Z4YXZ2bBJ2Cg1JY29uX2tjMDEzeXh3GAgiVDpACjEI9IM8Eg1NYXRlcmlhbEljb25zIAAyGnN1cGVydmlzb3JfYWNjb3VudF9yb3VuZGVkEQAAAAAAAEZAIgIQB4gDAvoDAPIFCQkAAAAAAADwP2IAkgEHML2ywv6TMMIBABJMCg1UZXh0X3g2cWM0c2tnGAIiKhILCgU1Ni40azACQAFaCSEAAAAAAAAQQIgDAvoDAPIFCQkAAAAAAADwP2IAkgEHMJ/lwv6TMMIBABIsCg1UZXh0X3kyNjA1N3ZnGAIiFxIPCglDdXN0b21lcnMwAkAPiAMC+gMAYgAYBCJAIgYIABAGMgBaJAkAAAAAAAAoQBEAAAAAAAAoQBkAAAAAAAAoQCEAAAAAAAAoQIgDAvoDAPIFCQkAAAAAAADwP2IAwgEAGAEiYgpOChYKCRFokAZpkAY/QBIJCQAAAAAAQGBAEjASJAkAAAAAAAA4QBEAAAAAAAA4QBkAAAAAAAA4QCEAAAAAAAA4QEICEAVaAGICEAEiAFIAiAMC+gMA8gUJCQAAAAAAAPA/YgB6ZAgCEAEZAAAAAAAAAAAhAAAAAADAgkAoAUokCQAAAAAAAAAAEQAAAAAAAAAAGQAAAAAAgFZAIQAAAAAAAPA/UiQJAAAAAAAA8D8RAAAAAAAAAAAZAAAAAAAAAAAhAAAAAAAA8D/CAQA=lemon@yahoo.com
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -30,8 +30,8 @@ class MyApp extends StatelessWidget {
           },
         ),
       ),
-      // home: LoginScreen(),
-      home: const AuthenticateSolo1Widget(),
+      home: RoomPricesPage(),
+      // home: const AuthenticateSolo1Widget(),
     );
   }
 }

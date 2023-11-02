@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -40,7 +40,7 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body) as Map<String, dynamic>;
         final accessToken = jsonResponse['access'];
-        print(accessToken);
+        // print(accessToken);
         return accessToken;
       } else {
         return null;
@@ -108,7 +108,7 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
               child: Center(
                 child: Container(
                   width: 290,
-                  height: 520,
+                  height: 490,
                   decoration: BoxDecoration(
                     color: const Color(0x99000000),
                     borderRadius: BorderRadius.circular(15.0),
@@ -249,6 +249,14 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
                                                   top: 24.0),
                                               child: ElevatedButton(
                                                 onPressed: handleLogin,
+                                                style: ElevatedButton.styleFrom(
+                                                  // padding: EdgeInsets.symmetric(
+                                                  //     horizontal:
+                                                  //         50), // Adjust the horizontal padding value to increase the width
+                                                  // You can also use fixedSize property to set a fixed width:
+                                                  fixedSize: Size(230,
+                                                      30), // Set the desired width and height
+                                                ),
                                                 child: const Text(
                                                   'Login',
                                                   style: TextStyle(
