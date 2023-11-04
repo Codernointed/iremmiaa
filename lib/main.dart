@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'signin.dart';
-import 'login.dart';
+// import 'login.dart';
 
 void main() => runApp(const MyApp());
 
@@ -14,6 +15,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: _title,
       theme: ThemeData(
+        fontFamily: GoogleFonts.merriweatherSans().fontFamily,
         primarySwatch: const MaterialColor(
           0xFFF59B15,
           <int, Color>{
@@ -30,8 +32,8 @@ class MyApp extends StatelessWidget {
           },
         ),
       ),
-      home: RoomPricesPage(),
-      // home: const AuthenticateSolo1Widget(),
+      // home: RoomPricesPage(),
+      home: const AuthenticateSolo1Widget(),
     );
   }
 }

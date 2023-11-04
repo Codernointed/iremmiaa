@@ -127,7 +127,6 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
                                 "Guudnyt",
                                 style: TextStyle(
                                   fontSize: 38,
-                                  fontFamily: 'Poppins',
                                   fontWeight: FontWeight.w700,
                                   color: Color(0xFFF59B15),
                                 ),
@@ -180,7 +179,6 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
                                                   labelStyle: TextStyle(
                                                     color: Color(0xffdedddb),
                                                     fontSize: 18,
-                                                    fontFamily: 'Poppins',
                                                   ),
                                                   enabledBorder:
                                                       UnderlineInputBorder(
@@ -192,7 +190,6 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
                                                 style: const TextStyle(
                                                   color: Color(0xffdedddb),
                                                   fontSize: 18,
-                                                  fontFamily: 'Poppins',
                                                 ),
                                                 maxLines: null,
                                               ),
@@ -210,7 +207,6 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
                                                   labelStyle: const TextStyle(
                                                     color: Color(0xffdedddb),
                                                     fontSize: 18,
-                                                    fontFamily: 'Poppins',
                                                   ),
                                                   suffixIcon: InkWell(
                                                     onTap: () {

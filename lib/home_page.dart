@@ -47,7 +47,6 @@ class HomePage extends StatelessWidget {
               child: Text(
                 text,
                 style: const TextStyle(
-                  fontFamily: 'Readex Pro',
                   color: Colors.white,
                   fontSize: 25,
                   fontWeight: FontWeight.bold,
@@ -81,7 +80,6 @@ class HomePage extends StatelessWidget {
             Text(
               'Welcome',
               style: TextStyle(
-                fontFamily: 'Poppins',
                 fontWeight: FontWeight.w600,
                 color: Color(0xFFF59B15),
                 fontSize: 25,

@@ -1,3 +1,4 @@
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -18,7 +19,6 @@ class _RoomPricesPageState extends State<RoomPricesPage> {
   final apiUrl = Uri.parse(
       'https://ethenatx.pythonanywhere.com/management/update-room-price/');
   List<EditedEntry> editedEntries = [];
-  List<Map<String, dynamic>> selectedCapacityRooms = [];
 
   @override
   void initState() {
@@ -34,8 +34,7 @@ class _RoomPricesPageState extends State<RoomPricesPage> {
       );
 
       if (roomsResponse.statusCode == 200) {
-        final List<Map<String, dynamic>> rooms =
-            (json.decode(roomsResponse.body) as List).cast();
+        final rooms = json.decode(roomsResponse.body) as List;
         availableCapacities = rooms
             .map((room) => room['room_capacity'].toString())
             .toSet()
@@ -68,7 +67,6 @@ class _RoomPricesPageState extends State<RoomPricesPage> {
         title: Text(
           'Edit Room Prices',
           style: TextStyle(
-            fontFamily: 'Poppins',
             fontWeight: FontWeight.w600,
             color: Color(0xFFF59B15),
             fontSize: 21,
@@ -91,72 +89,144 @@ class _RoomPricesPageState extends State<RoomPricesPage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: <Widget>[
-            DropdownButton<String>(
-              value: selectedCapacity,
-              onChanged: (String? newValue) {
-                setState(() {
-                  selectedCapacity = newValue ?? '1';
-                });
-              },
-              items: availableCapacities.map((capacity) {
-                return DropdownMenuItem<String>(
-                  value: capacity,
-                  child: Text('Capacity $capacity'),
-                );
-              }).toList(),
-            ),
+            buildSectionTitle('Select room capacity to edit'),
+            const SizedBox(height: 15.0),
+            buildDropdown(),
+            const SizedBox(height: 30.0),
+            buildSectionTitle('Enter the new room price'),
+            const SizedBox(height: 10.0),
+            buildPriceInput(),
             const SizedBox(height: 20.0),
-            Row(
-              children: <Widget>[
-                const Text('New Price: \$ '),
-                Expanded(
-                  child: TextField(
-                    keyboardType: TextInputType.number,
-                    onChanged: (value) {
-                      setState(() {
-                        newPrice = double.tryParse(value) ?? 0.0;
-                      });
-                    },
+            buildApplyButton(),
+            const SizedBox(height: 20.0),
+            buildEditedEntriesList(),
+            buildUndoAllChangesButton(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildSectionTitle(String title) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 18,
+        ),
+      ),
+    );
+  }
+
+  Widget buildDropdown() {
+    return DropdownButton<String>(
+      isDense: true,
+      isExpanded: true,
+      value: selectedCapacity,
+      onChanged: (String? newValue) {
+        setState(() {
+          selectedCapacity = newValue ?? '1';
+        });
+      },
+      items: availableCapacities.map((capacity) {
+        return DropdownMenuItem<String>(
+          value: capacity,
+          child: Text('Capacity $capacity'),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget buildPriceInput() {
+    return Row(
+      children: <Widget>[
+        const Text('GH₵'),
+        Expanded(
+          child: TextField(
+            keyboardType: TextInputType.number,
+            onChanged: (value) {
+              setState(() {
+                newPrice = double.tryParse(value) ?? 0.0;
+              });
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget buildApplyButton() {
+    return Container(
+      width: double.infinity,
+      height: 35,
+      child: ElevatedButton(
+        onPressed: () async {
+          if (await updateRoomPrices()) {
+            final oldPrice = await getOldRoomPrice();
+            editedEntries.add(EditedEntry(
+              capacity: int.parse(selectedCapacity),
+              oldPrice: oldPrice,
+              newPrice: newPrice,
+            ));
+          }
+        },
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('Apply Changes'),
+            SizedBox(width: 5),
+            const FaIcon(FontAwesomeIcons.solidFloppyDisk, size: 18),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildEditedEntriesList() {
+    return Expanded(
+      child: Column(
+        children: [
+          ListView.builder(
+            itemCount: editedEntries.length,
+            shrinkWrap: true,
+            itemBuilder: (context, index) {
+              final entry = editedEntries[index];
+              return Card(
+                child: ListTile(
+                  title: Text('Capacity ${entry.capacity}',
+                      style: TextStyle(fontSize: 18)),
+                  subtitle: Text(
+                    'Old Price: \$${entry.oldPrice.toStringAsFixed(2)}\nNew Price: \$${entry.newPrice.toStringAsFixed(2)}',
                   ),
                 ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildUndoAllChangesButton() {
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Padding(
+        padding: EdgeInsets.only(top: 16),
+        child: Container(
+          width: double.infinity,
+          height: 35,
+          child: ElevatedButton(
+            onPressed: () {},
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('Undo All Changes'),
+                SizedBox(width: 5),
+                const FaIcon(FontAwesomeIcons.arrowRotateLeft, size: 18),
               ],
             ),
-            const SizedBox(height: 20.0),
-            ElevatedButton(
-              onPressed: () async {
-                if (await updateRoomPrices()) {
-                  final oldPrice = await getOldRoomPrice();
-                  editedEntries.add(EditedEntry(
-                    capacity: int.parse(selectedCapacity),
-                    oldPrice: oldPrice,
-                    newPrice: newPrice,
-                  ));
-
-                  // After updating the room prices, fetch and display the rooms for the selected capacity.
-                  await fetchRoomsForCapacity(selectedCapacity);
-                }
-              },
-              child: const Text('Apply Changes'),
-            ),
-            const SizedBox(height: 20.0),
-            Expanded(
-              child: ListView.builder(
-                itemCount: editedEntries.length,
-                itemBuilder: (context, index) {
-                  final entry = editedEntries[index];
-                  return Card(
-                    child: ListTile(
-                      title: Text('Capacity ${entry.capacity}',
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                      subtitle: Text(
-                        'Old Price: \$${entry.oldPrice.toStringAsFixed(2)}\nNew Price: \$${entry.newPrice.toStringAsFixed(2)}',
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
@@ -195,8 +265,7 @@ class _RoomPricesPageState extends State<RoomPricesPage> {
       );
 
       if (roomsResponse.statusCode == 200) {
-        final List<Map<String, dynamic>> rooms =
-            (json.decode(roomsResponse.body) as List).cast();
+        final rooms = json.decode(roomsResponse.body) as List;
         final room = rooms.firstWhere(
           (room) => room['room_capacity'] == selectedCapacity,
           orElse: () => {},
@@ -210,32 +279,6 @@ class _RoomPricesPageState extends State<RoomPricesPage> {
       showSnackBar('An error occurred. Please check your network connection.');
     }
     return 0.0;
-  }
-
-  Future<void> fetchRoomsForCapacity(String capacity) async {
-    try {
-      final roomsResponse = await http.get(
-        Uri.parse('https://ethenatx.pythonanywhere.com/management/rooms/'),
-        headers: {
-          'Authorization': 'Bearer ${widget.accessToken}',
-        },
-      );
-
-      if (roomsResponse.statusCode == 200) {
-        final List<Map<String, dynamic>> rooms =
-            (json.decode(roomsResponse.body) as List).cast();
-        final roomsForCapacity =
-            rooms.where((room) => room['room_capacity'] == capacity).toList();
-
-        setState(() {
-          selectedCapacityRooms = roomsForCapacity;
-        });
-      } else {
-        showSnackBar('Failed to fetch rooms for the selected capacity');
-      }
-    } catch (e) {
-      showSnackBar('An error occurred. Please check your network connection.');
-    }
   }
 
   void showSnackBar(String message) {
