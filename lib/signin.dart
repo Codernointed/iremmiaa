@@ -72,6 +72,7 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
           content: Text('Login Successful!'),
         ),
       );
+
       Navigator.push(
         context,
         MaterialPageRoute(

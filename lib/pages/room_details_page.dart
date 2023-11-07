@@ -88,7 +88,6 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
         title: const Text(
           'Rooms',
           style: TextStyle(
-            fontFamily: 'Poppins',
             fontWeight: FontWeight.w600,
             color: Color(0xFFF59B15),
             fontSize: 25,
@@ -187,6 +186,7 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
     return GridView.builder(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
+        childAspectRatio: 0.85,
       ),
       itemCount: filteredRooms.isEmpty ? rooms.length : filteredRooms.length,
       shrinkWrap: true,
@@ -234,12 +234,14 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
                           const InputDecoration(labelText: 'Room Capacity'),
                     ),
                     TextFormField(
-                      controller: roomPriceController,
+                      controller:
+                          roomPriceController, // Separate controller for roomPrice
                       decoration:
                           const InputDecoration(labelText: 'Room Price'),
                     ),
                     TextFormField(
-                      controller: roomPriceController,
+                      controller:
+                          roomBedSpaceController, // Separate controller for roomBedSpace
                       decoration:
                           const InputDecoration(labelText: 'Space Left'),
                     ),
@@ -381,7 +383,7 @@ class RoomCard extends StatelessWidget {
   final Function(Room) updateRoom;
 
   const RoomCard({
-    super.key,
+    Key? key,
     required this.room,
     required this.onEdit,
     required this.accessToken,
@@ -404,31 +406,49 @@ class RoomCard extends StatelessWidget {
             children: [
               Text(
                 'Room No: ${room.roomNo}',
-                style: const TextStyle(
-                  fontSize: 18,
-                  color: Color(0xFFF59B15),
+                style: TextStyle(
+                  fontSize: 20,
+                  color: const Color(0xff1f170b),
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 8.0),
+              const SizedBox(height: 4.0),
               Flexible(
-                child: Text('Capacity: ${room.roomCapacity}'),
-              ),
-              Flexible(
-                child: Text('Price: GH₵${room.roomPrice.toStringAsFixed(2)}'),
-              ),
-              Flexible(
-                child: Text('Space Left: ${room.roomBedSpace}'),
-              ),
-              Flexible(
-                child: Text('Occupied: ${room.occupied ? 'Yes' : 'No'}'),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 9, 0, 5),
-                child: ElevatedButton(
-                  onPressed: () => onEdit(room),
-                  child: const Text('Edit'),
+                child: Text(
+                  'Capacity: ${room.roomCapacity}',
+                  style: TextStyle(
+                    fontSize: 18, // Adjust the font size as needed
+                  ),
                 ),
+              ),
+              Flexible(
+                child: Text(
+                  'GH₵${room.roomPrice.toStringAsFixed(2)}',
+                  style: TextStyle(
+                    fontSize: 17, // Adjust the font size as needed
+                  ),
+                ),
+              ),
+              Flexible(
+                child: Text(
+                  'Space Left: ${room.roomBedSpace}',
+                  style: TextStyle(
+                    fontSize: 18, // Adjust the font size as needed
+                  ),
+                ),
+              ),
+              Flexible(
+                child: Text(
+                  'Occupied: ${room.occupied ? 'Yes' : 'No'}',
+                  style: TextStyle(
+                    fontSize: 18, // Adjust the font size as needed
+                  ),
+                ),
+              ),
+              const SizedBox(height: 9),
+              ElevatedButton(
+                onPressed: () => onEdit(room),
+                child: const Text('Edit'),
               ),
             ],
           ),

@@ -14,7 +14,9 @@ class RoomPricesPage extends StatefulWidget {
 
 class _RoomPricesPageState extends State<RoomPricesPage> {
   List<String> availableCapacities = [];
-  String selectedCapacity = '1';
+  String selectedCapacity = '';
+  TextEditingController _textEditingController = TextEditingController();
+
   double newPrice = 0.0;
   final apiUrl = Uri.parse(
       'https://ethenatx.pythonanywhere.com/management/update-room-price/');
@@ -23,10 +25,10 @@ class _RoomPricesPageState extends State<RoomPricesPage> {
   @override
   void initState() {
     super.initState();
-    fetchAvailableCapacities();
+    fetchRoomData();
   }
 
-  Future<void> fetchAvailableCapacities() async {
+  Future<void> fetchRoomData() async {
     try {
       final roomsResponse = await http.get(
         Uri.parse('https://ethenatx.pythonanywhere.com/management/rooms/'),
@@ -39,6 +41,9 @@ class _RoomPricesPageState extends State<RoomPricesPage> {
             .map((room) => room['room_capacity'].toString())
             .toSet()
             .toList();
+        availableCapacities.insert(0, '...');
+        // Sort the list in ascending order.
+        availableCapacities.sort();
 
         if (availableCapacities.isNotEmpty) {
           setState(() {
@@ -46,7 +51,7 @@ class _RoomPricesPageState extends State<RoomPricesPage> {
           });
         }
       } else {
-        showSnackBar('Failed to fetch available capacities');
+        showSnackBar('Failed to fetch room data');
       }
     } catch (e) {
       showSnackBar('An error occurred. Please check your network connection.');
@@ -57,6 +62,7 @@ class _RoomPricesPageState extends State<RoomPricesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        shadowColor: Colors.white,
         backgroundColor: Colors.white,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Color(0xFFF59B15)),
@@ -89,31 +95,35 @@ class _RoomPricesPageState extends State<RoomPricesPage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: <Widget>[
-            buildSectionTitle('Select room capacity to edit'),
+            buildSectionTitle('Select room capacity to edit', 18),
             const SizedBox(height: 15.0),
             buildDropdown(),
             const SizedBox(height: 30.0),
-            buildSectionTitle('Enter the new room price'),
+            buildSectionTitle('Enter the new room price', 18),
             const SizedBox(height: 10.0),
             buildPriceInput(),
             const SizedBox(height: 20.0),
             buildApplyButton(),
             const SizedBox(height: 20.0),
+            buildSectionTitle('History edited rooms:', 19),
+            const SizedBox(height: 11.0),
+            buildSectionTitle('disappears when you exit the page', 14),
+            const SizedBox(height: 20.0),
             buildEditedEntriesList(),
-            buildUndoAllChangesButton(),
+            buildDeleteAllChangesButton(),
           ],
         ),
       ),
     );
   }
 
-  Widget buildSectionTitle(String title) {
+  Widget buildSectionTitle(String title, double fontSizeValue) {
     return Align(
       alignment: Alignment.centerLeft,
       child: Text(
         title,
         style: TextStyle(
-          fontSize: 18,
+          fontSize: fontSizeValue,
         ),
       ),
     );
@@ -126,7 +136,7 @@ class _RoomPricesPageState extends State<RoomPricesPage> {
       value: selectedCapacity,
       onChanged: (String? newValue) {
         setState(() {
-          selectedCapacity = newValue ?? '1';
+          selectedCapacity = newValue ?? '...';
         });
       },
       items: availableCapacities.map((capacity) {
@@ -144,6 +154,7 @@ class _RoomPricesPageState extends State<RoomPricesPage> {
         const Text('GH₵'),
         Expanded(
           child: TextField(
+            controller: _textEditingController,
             keyboardType: TextInputType.number,
             onChanged: (value) {
               setState(() {
@@ -162,19 +173,24 @@ class _RoomPricesPageState extends State<RoomPricesPage> {
       height: 35,
       child: ElevatedButton(
         onPressed: () async {
-          if (await updateRoomPrices()) {
-            final oldPrice = await getOldRoomPrice();
-            editedEntries.add(EditedEntry(
-              capacity: int.parse(selectedCapacity),
-              oldPrice: oldPrice,
-              newPrice: newPrice,
-            ));
+          if (selectedCapacity != '...') {
+            if (await updateRoomPrices()) {
+              setState(() {
+                editedEntries.add(EditedEntry(
+                  capacity: int.parse(selectedCapacity),
+                  newPrice: newPrice,
+                ));
+                _textEditingController.text = '';
+              });
+            }
+          } else {
+            showSnackBar('Select Room Capacity');
           }
         },
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('Apply Changes'),
+            Text('Apply Changes', style: TextStyle(fontSize: 16)),
             SizedBox(width: 5),
             const FaIcon(FontAwesomeIcons.solidFloppyDisk, size: 18),
           ],
@@ -184,31 +200,38 @@ class _RoomPricesPageState extends State<RoomPricesPage> {
   }
 
   Widget buildEditedEntriesList() {
+    print('Rebuilding edited entries list.');
+    print(editedEntries);
+
     return Expanded(
-      child: Column(
-        children: [
-          ListView.builder(
-            itemCount: editedEntries.length,
-            shrinkWrap: true,
-            itemBuilder: (context, index) {
-              final entry = editedEntries[index];
-              return Card(
-                child: ListTile(
-                  title: Text('Capacity ${entry.capacity}',
-                      style: TextStyle(fontSize: 18)),
-                  subtitle: Text(
-                    'Old Price: \$${entry.oldPrice.toStringAsFixed(2)}\nNew Price: \$${entry.newPrice.toStringAsFixed(2)}',
-                  ),
-                ),
-              );
-            },
-          ),
-        ],
+      child: ListView.builder(
+        shrinkWrap: true,
+        itemCount: editedEntries.length,
+        itemBuilder: (context, index) {
+          final entry = editedEntries[index];
+          return Card(
+            child: ListTile(
+              title: Text('Capacity ${entry.capacity}',
+                  style: TextStyle(fontSize: 18)),
+              subtitle: Text(
+                'New Price: GH₵${entry.newPrice.toStringAsFixed(2)}',
+              ),
+              trailing: IconButton(
+                icon: Icon(Icons.delete, color: Color(0xFFF59B15)),
+                onPressed: () {
+                  setState(() {
+                    editedEntries.removeAt(index);
+                  });
+                },
+              ),
+            ),
+          );
+        },
       ),
     );
   }
 
-  Widget buildUndoAllChangesButton() {
+  Widget buildDeleteAllChangesButton() {
     return Align(
       alignment: Alignment.bottomCenter,
       child: Padding(
@@ -217,13 +240,17 @@ class _RoomPricesPageState extends State<RoomPricesPage> {
           width: double.infinity,
           height: 35,
           child: ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              setState(() {
+                editedEntries.clear();
+              });
+            },
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text('Undo All Changes'),
+                Text('Delete All Changes', style: TextStyle(fontSize: 16)),
                 SizedBox(width: 5),
-                const FaIcon(FontAwesomeIcons.arrowRotateLeft, size: 18),
+                const Icon(Icons.delete, size: 18),
               ],
             ),
           ),
@@ -248,37 +275,14 @@ class _RoomPricesPageState extends State<RoomPricesPage> {
 
       final responseJson = json.decode(response.body);
       (responseJson["message"]);
-      return response.statusCode == 200;
+
+      print(response.statusCode);
+      showSnackBar(responseJson["message"]);
+      return true;
     } catch (e) {
       showSnackBar('An error occurred. Please check your network connection.');
       return false;
     }
-  }
-
-  Future<double> getOldRoomPrice() async {
-    try {
-      final roomsResponse = await http.get(
-        Uri.parse('https://ethenatx.pythonanywhere.com/management/rooms/'),
-        headers: {
-          'Authorization': 'Bearer ${widget.accessToken}',
-        },
-      );
-
-      if (roomsResponse.statusCode == 200) {
-        final rooms = json.decode(roomsResponse.body) as List;
-        final room = rooms.firstWhere(
-          (room) => room['room_capacity'] == selectedCapacity,
-          orElse: () => {},
-        );
-
-        if (room.isNotEmpty) {
-          return double.tryParse(room['room_price'].toString()) ?? 0.0;
-        }
-      }
-    } catch (e) {
-      showSnackBar('An error occurred. Please check your network connection.');
-    }
-    return 0.0;
   }
 
   void showSnackBar(String message) {
@@ -289,9 +293,10 @@ class _RoomPricesPageState extends State<RoomPricesPage> {
 
 class EditedEntry {
   final int capacity;
-  final double oldPrice;
   final double newPrice;
 
-  EditedEntry(
-      {required this.capacity, required this.oldPrice, required this.newPrice});
+  EditedEntry({
+    required this.capacity,
+    required this.newPrice,
+  });
 }

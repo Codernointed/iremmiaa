@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rebook/pages/room_details_page.dart';
 import 'package:rebook/pages/room_prices_page.dart';
+import 'package:rebook/pages/verify_tenants.dart';
 
 class HomePage extends StatelessWidget {
   final String accessToken;
@@ -108,7 +109,6 @@ class HomePage extends StatelessWidget {
 
             GestureDetector(
               onTap: () {
-                // Navigate to RoomDetailsPage
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -140,13 +140,26 @@ class HomePage extends StatelessWidget {
                 'assets/details.jpg',
               ),
             ),
+
             _buildCard(
               'View Tenants',
               'assets/view.jpg',
             ),
-            _buildCard(
-              'Verify Tenants',
-              'assets/verify.jpg',
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => VerifyTenantsPage(
+                      accessToken: accessToken,
+                    ),
+                  ),
+                );
+              },
+              child: _buildCard(
+                'Verify Tenants',
+                'assets/verify.jpg',
+              ),
             ),
           ],
         ),
