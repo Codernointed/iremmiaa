@@ -1,222 +1,80 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:qr_code_scanner/qr_code_scanner.dart';
 
-class RoomPricesPage extends StatefulWidget {
-  final String accessToken;
-
-  RoomPricesPage({required this.accessToken});
+class QRScannerScreen extends StatefulWidget {
+  const QRScannerScreen({Key? key}) : super(key: key);
 
   @override
-  _RoomPricesPageState createState() => _RoomPricesPageState();
+  State<StatefulWidget> createState() => _QRScannerScreenState();
 }
 
-class _RoomPricesPageState extends State<RoomPricesPage> {
-  List<String> availableCapacities = [];
-  String selectedCapacity = '1';
-  double newPrice = 0.0;
-  final apiUrl = Uri.parse(
-      'https://ethenatx.pythonanywhere.com/management/update-room-price/');
-  List<EditedEntry> editedEntries = [];
-
-  @override
-  void initState() {
-    super.initState();
-    fetchAvailableCapacities();
-  }
-
-  Future<void> fetchAvailableCapacities() async {
-    try {
-      final roomsResponse = await http.get(
-        Uri.parse('https://ethenatx.pythonanywhere.com/management/rooms/'),
-        headers: {'Authorization': 'Bearer ${widget.accessToken}'},
-      );
-
-      if (roomsResponse.statusCode == 200) {
-        final rooms = json.decode(roomsResponse.body) as List;
-        availableCapacities = rooms
-            .map((room) => room['room_capacity'].toString())
-            .toSet()
-            .toList();
-
-        if (availableCapacities.isNotEmpty) {
-          setState(() {
-            selectedCapacity = availableCapacities.first;
-          });
-        }
-      } else {
-        showSnackBar('Failed to fetch available capacities');
-      }
-    } catch (e) {
-      showSnackBar('An error occurred. Please check your network connection.');
-    }
-  }
+class _QRScannerScreenState extends State<QRScannerScreen> {
+  late QRViewController _controller;
+  final GlobalKey _qrKey = GlobalKey(debugLabel: 'QR');
+  String _scannedData = '';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Color(0xFFF59B15)),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-        title: Text(
-          'Edit Room Prices',
-          style: TextStyle(
-            fontFamily: 'Poppins',
-            fontWeight: FontWeight.w600,
-            color: Color(0xFFF59B15),
-            fontSize: 21,
-          ),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(0, 0, 30, 0),
-            child: IconButton(
-              icon: Icon(Icons.account_circle,
-                  color: Color(0xFFF59B15), size: 35),
-              onPressed: () {
-                // Navigate to the profile page here.
-              },
+        title: const Text('QR Scanner'),
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            flex: 5,
+            child: QRView(
+              key: _qrKey,
+              onQRViewCreated: _onQRViewCreated,
             ),
+          ),
+          const SizedBox(height: 20),
+          const Text(
+            'Scanned Data:',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          Text(
+            _scannedData,
+            style: const TextStyle(fontSize: 16),
           ),
         ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: <Widget>[
-            DropdownButton<String>(
-              value: selectedCapacity,
-              onChanged: (String? newValue) {
-                setState(() {
-                  selectedCapacity = newValue ?? '1';
-                });
-              },
-              items: availableCapacities.map((capacity) {
-                return DropdownMenuItem<String>(
-                  value: capacity,
-                  child: Text('Capacity $capacity'),
-                );
-              }).toList(),
-            ),
-            const SizedBox(height: 20.0),
-            Row(
-              children: <Widget>[
-                const Text('New Price: \$ '),
-                Expanded(
-                  child: TextField(
-                    keyboardType: TextInputType.number,
-                    onChanged: (value) {
-                      setState(() {
-                        newPrice = double.tryParse(value) ?? 0.0;
-                      });
-                    },
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20.0),
-            ElevatedButton(
-              onPressed: () async {
-                if (await updateRoomPrices()) {
-                  final oldPrice = await getOldRoomPrice();
-                  editedEntries.add(EditedEntry(
-                    capacity: int.parse(selectedCapacity),
-                    oldPrice: oldPrice,
-                    newPrice: newPrice,
-                  ));
-                }
-              },
-              child: const Text('Apply Changes'),
-            ),
-            const SizedBox(height: 20.0),
-            Expanded(
-              child: ListView.builder(
-                itemCount: editedEntries.length,
-                itemBuilder: (context, index) {
-                  final entry = editedEntries[index];
-                  return Card(
-                    child: ListTile(
-                      title: Text('Capacity ${entry.capacity}',
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                      subtitle: Text(
-                        'Old Price: \$${entry.oldPrice.toStringAsFixed(2)}\nNew Price: \$${entry.newPrice.toStringAsFixed(2)}',
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
 
-  Future<bool> updateRoomPrices() async {
-    try {
-      final response = await http.put(
-        apiUrl,
-        headers: {
-          'Authorization': 'Bearer ${widget.accessToken}',
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: jsonEncode({
-          'room_capacity': selectedCapacity,
-          'new_price': newPrice,
-        }),
-      );
+  void _onQRViewCreated(QRViewController controller) {
+    setState(() {
+      _controller = controller;
+      _controller.scannedDataStream.listen((scanData) {
+        setState(() {
+          _scannedData = scanData.code ?? '';
+        });
 
-      final responseJson = json.decode(response.body);
-      (responseJson["message"]);
-      return response.statusCode == 200;
-    } catch (e) {
-      showSnackBar('An error occurred. Please check your network connection.');
-      return false;
-    }
-  }
-
-  Future<double> getOldRoomPrice() async {
-    try {
-      final roomsResponse = await http.get(
-        Uri.parse('https://ethenatx.pythonanywhere.com/management/rooms/'),
-        headers: {
-          'Authorization': 'Bearer ${widget.accessToken}',
-        },
-      );
-
-      if (roomsResponse.statusCode == 200) {
-        final rooms = json.decode(roomsResponse.body) as List;
-        final room = rooms.firstWhere(
-          (room) => room['room_capacity'] == selectedCapacity,
-          orElse: () => {},
-        );
-
-        if (room.isNotEmpty) {
-          return double.tryParse(room['room_price'].toString()) ?? 0.0;
+        // Perform validation or further processing of the scanned data
+        if (_scannedData.isNotEmpty) {
+          // Perform your validation logic here
+          if (_isValidQRCode(_scannedData)) {
+            // QR code is valid, perform further actions
+            // e.g., navigate to a different screen, update UI, etc.
+          } else {
+            // Invalid QR code, show an error message or perform appropriate actions
+          }
         }
-      }
-    } catch (e) {
-      showSnackBar('An error occurred. Please check your network connection.');
-    }
-    return 0.0;
+      });
+    });
   }
 
-  void showSnackBar(String message) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(message)));
+  bool _isValidQRCode(String scannedData) {
+    // Implement your custom validation logic here
+    // Return true if the QR code is valid, otherwise return false
+    // You can check the scannedData against a specific format or perform any other checks
+    // For example, check if the scanned data matches a certain pattern or if it exists in a database
+    return true; // Replace with your validation logic
   }
-}
 
-class EditedEntry {
-  final int capacity;
-  final double oldPrice;
-  final double newPrice;
-
-  EditedEntry(
-      {required this.capacity, required this.oldPrice, required this.newPrice});
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 }
