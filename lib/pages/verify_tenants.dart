@@ -40,7 +40,7 @@ class _VerifyTenantsPageState extends State<VerifyTenantsPage> {
           },
         ),
         title: const Text(
-          'Verify Tenants',
+          'Scan QR',
           style: TextStyle(
             fontWeight: FontWeight.w600,
             color: Color(0xFFF59B15),
