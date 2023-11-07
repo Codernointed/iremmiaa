@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -50,12 +52,10 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
     );
 
     if (response.statusCode == 200) {
-      print("RES: $response.body");
       final List<dynamic> roomData = json.decode(response.body);
-      print("RESpo: $roomData");
 
       rooms = roomData.map((roomJson) => Room.fromJson(roomJson)).toList();
-      print("filter: $rooms");
+      // print("filter: $rooms");
       filteredRooms = List.from(rooms);
       setState(() {});
     } else {
@@ -130,9 +130,9 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
             filterRooms();
           });
         },
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
           hintText: 'Search by Room No',
-          prefixIcon: const Icon(Icons.search),
+          prefixIcon: Icon(Icons.search),
         ),
       ),
     );
@@ -230,18 +230,19 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
                     ),
                     TextFormField(
                       controller: roomCapacityController,
+                      keyboardType: TextInputType.number,
                       decoration:
                           const InputDecoration(labelText: 'Room Capacity'),
                     ),
                     TextFormField(
-                      controller:
-                          roomPriceController, // Separate controller for roomPrice
+                      controller: roomPriceController,
+                      keyboardType: TextInputType.number,
                       decoration:
                           const InputDecoration(labelText: 'Room Price'),
                     ),
                     TextFormField(
-                      controller:
-                          roomBedSpaceController, // Separate controller for roomBedSpace
+                      controller: roomBedSpaceController,
+                      keyboardType: TextInputType.number,
                       decoration:
                           const InputDecoration(labelText: 'Space Left'),
                     ),
@@ -383,7 +384,8 @@ class RoomCard extends StatelessWidget {
   final Function(Room) updateRoom;
 
   const RoomCard({
-    Key? key,
+    super.key,
+    // Key? key,
     required this.room,
     required this.onEdit,
     required this.accessToken,
@@ -406,9 +408,9 @@ class RoomCard extends StatelessWidget {
             children: [
               Text(
                 'Room No: ${room.roomNo}',
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 20,
-                  color: const Color(0xff1f170b),
+                  color: Color(0xff1f170b),
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -416,7 +418,7 @@ class RoomCard extends StatelessWidget {
               Flexible(
                 child: Text(
                   'Capacity: ${room.roomCapacity}',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 18, // Adjust the font size as needed
                   ),
                 ),
@@ -424,7 +426,7 @@ class RoomCard extends StatelessWidget {
               Flexible(
                 child: Text(
                   'GH₵${room.roomPrice.toStringAsFixed(2)}',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 17, // Adjust the font size as needed
                   ),
                 ),
@@ -432,7 +434,7 @@ class RoomCard extends StatelessWidget {
               Flexible(
                 child: Text(
                   'Space Left: ${room.roomBedSpace}',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 18, // Adjust the font size as needed
                   ),
                 ),
@@ -440,7 +442,7 @@ class RoomCard extends StatelessWidget {
               Flexible(
                 child: Text(
                   'Occupied: ${room.occupied ? 'Yes' : 'No'}',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 18, // Adjust the font size as needed
                   ),
                 ),

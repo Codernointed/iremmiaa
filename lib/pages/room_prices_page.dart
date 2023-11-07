@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -6,7 +8,7 @@ import 'dart:convert';
 class RoomPricesPage extends StatefulWidget {
   final String accessToken;
 
-  RoomPricesPage({required this.accessToken});
+  const RoomPricesPage({super.key, required this.accessToken});
 
   @override
   _RoomPricesPageState createState() => _RoomPricesPageState();
@@ -15,7 +17,7 @@ class RoomPricesPage extends StatefulWidget {
 class _RoomPricesPageState extends State<RoomPricesPage> {
   List<String> availableCapacities = [];
   String selectedCapacity = '';
-  TextEditingController _textEditingController = TextEditingController();
+  final TextEditingController _textEditingController = TextEditingController();
 
   double newPrice = 0.0;
   final apiUrl = Uri.parse(
@@ -65,12 +67,12 @@ class _RoomPricesPageState extends State<RoomPricesPage> {
         shadowColor: Colors.white,
         backgroundColor: Colors.white,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Color(0xFFF59B15)),
+          icon: const Icon(Icons.arrow_back, color: Color(0xFFF59B15)),
           onPressed: () {
             Navigator.of(context).pop();
           },
         ),
-        title: Text(
+        title: const Text(
           'Edit Room Prices',
           style: TextStyle(
             fontWeight: FontWeight.w600,
@@ -82,7 +84,7 @@ class _RoomPricesPageState extends State<RoomPricesPage> {
           Padding(
             padding: const EdgeInsets.fromLTRB(0, 0, 30, 0),
             child: IconButton(
-              icon: Icon(Icons.account_circle,
+              icon: const Icon(Icons.account_circle,
                   color: Color(0xFFF59B15), size: 35),
               onPressed: () {
                 // Navigate to the profile page here.
@@ -168,7 +170,7 @@ class _RoomPricesPageState extends State<RoomPricesPage> {
   }
 
   Widget buildApplyButton() {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       height: 35,
       child: ElevatedButton(
@@ -187,12 +189,12 @@ class _RoomPricesPageState extends State<RoomPricesPage> {
             showSnackBar('Select Room Capacity');
           }
         },
-        child: Row(
+        child: const Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text('Apply Changes', style: TextStyle(fontSize: 16)),
             SizedBox(width: 5),
-            const FaIcon(FontAwesomeIcons.solidFloppyDisk, size: 18),
+            FaIcon(FontAwesomeIcons.solidFloppyDisk, size: 18),
           ],
         ),
       ),
@@ -200,8 +202,8 @@ class _RoomPricesPageState extends State<RoomPricesPage> {
   }
 
   Widget buildEditedEntriesList() {
-    print('Rebuilding edited entries list.');
-    print(editedEntries);
+    // print('Rebuilding edited entries list.');
+    // print(editedEntries);
 
     return Expanded(
       child: ListView.builder(
@@ -212,12 +214,12 @@ class _RoomPricesPageState extends State<RoomPricesPage> {
           return Card(
             child: ListTile(
               title: Text('Capacity ${entry.capacity}',
-                  style: TextStyle(fontSize: 18)),
+                  style: const TextStyle(fontSize: 18)),
               subtitle: Text(
                 'New Price: GH₵${entry.newPrice.toStringAsFixed(2)}',
               ),
               trailing: IconButton(
-                icon: Icon(Icons.delete, color: Color(0xFFF59B15)),
+                icon: const Icon(Icons.delete, color: Color(0xFFF59B15)),
                 onPressed: () {
                   setState(() {
                     editedEntries.removeAt(index);
@@ -235,8 +237,8 @@ class _RoomPricesPageState extends State<RoomPricesPage> {
     return Align(
       alignment: Alignment.bottomCenter,
       child: Padding(
-        padding: EdgeInsets.only(top: 16),
-        child: Container(
+        padding: const EdgeInsets.only(top: 16),
+        child: SizedBox(
           width: double.infinity,
           height: 35,
           child: ElevatedButton(
@@ -245,12 +247,12 @@ class _RoomPricesPageState extends State<RoomPricesPage> {
                 editedEntries.clear();
               });
             },
-            child: Row(
+            child: const Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text('Delete All Changes', style: TextStyle(fontSize: 16)),
                 SizedBox(width: 5),
-                const Icon(Icons.delete, size: 18),
+                Icon(Icons.delete, size: 18),
               ],
             ),
           ),
@@ -276,7 +278,7 @@ class _RoomPricesPageState extends State<RoomPricesPage> {
       final responseJson = json.decode(response.body);
       (responseJson["message"]);
 
-      print(response.statusCode);
+      // print(response.statusCode);
       showSnackBar(responseJson["message"]);
       return true;
     } catch (e) {

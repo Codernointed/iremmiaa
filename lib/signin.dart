@@ -251,7 +251,7 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
                                                   //     horizontal:
                                                   //         50), // Adjust the horizontal padding value to increase the width
                                                   // You can also use fixedSize property to set a fixed width:
-                                                  fixedSize: Size(230,
+                                                  fixedSize: const Size(230,
                                                       30), // Set the desired width and height
                                                 ),
                                                 child: const Text(
