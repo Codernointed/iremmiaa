@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'login.dart';
 import 'signin.dart';
 // import 'login.dart';
 
@@ -42,7 +43,7 @@ class MyApp extends StatelessWidget {
       //       accessToken: ModalRoute.of(context)!.settings.arguments as String),
       // },
       // initialRoute: '/login',
-      home: const AuthenticateSolo1Widget(),
+      home: ProfilePage(),
     );
   }
 }
