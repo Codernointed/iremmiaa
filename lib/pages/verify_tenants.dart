@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -13,38 +12,19 @@ class VerifyTenantsPage extends StatefulWidget {
 }
 
 class _VerifyTenantsPageState extends State<VerifyTenantsPage> {
-  final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
-  QRViewController? controller;
-  bool isScanning = true;
   bool isLoading = false;
   String scanMessage = "Scan the QR code to verify the tenant.";
 
-  @override
-  void reassemble() {
-    super.reassemble();
-    if (controller != null) {
-      controller!.toggleFlash();
-    }
-  }
-
-  void onQRViewCreated(QRViewController controller) {
+  Future<void> sendHardcodedVerificationCode() async {
     setState(() {
-      this.controller = controller;
+      isLoading = true;
+      scanMessage = "Verifying...";
     });
-    controller.scannedDataStream.listen((scanData) async {
-      final decodedQRCode = scanData.code; // Extract the text from Barcode
-      setState(() {
-        isLoading = true;
-        scanMessage = "Verifying...";
-      });
 
-      // When a QR code is scanned, process it
-      await verifyTenant(decodedQRCode);
-    });
-  }
-
-  Future<void> verifyTenant(String? decodedQRCode) async {
     try {
+      const verificationCode =
+          "ST.7dc0-05r0-En-011b0-Kor-6c1c5909-8a73-463f- be90-07d2d838a0fc-enoch-2038383-072024k0- korley-19:42:56.679167-Grj";
+
       final response = await http.post(
         Uri.parse(
             'https://ethenatx.pythonanywhere.com/management/verify-tenant/'),
@@ -53,14 +33,11 @@ class _VerifyTenantsPageState extends State<VerifyTenantsPage> {
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode({
-          'verification_code': decodedQRCode,
+          'verification_code': verificationCode,
         }),
       );
-      print(decodedQRCode);
+
       if (response.statusCode == 200) {
-        print(response);
-        print(response.body);
-        print(response.statusCode);
         final responseData = json.decode(response.body);
         if (responseData.containsKey('Student') &&
             responseData.containsKey('Verified')) {
@@ -104,10 +81,13 @@ class _VerifyTenantsPageState extends State<VerifyTenantsPage> {
           });
         }
       } else {
-        print("An error occurred :");
-        print(response);
-        print(response.body);
+        final responseData = json.decode(response.body);
+
+        print("An error occurred:");
+        print(responseData["message"]);
+        print(responseData);
         print(response.statusCode);
+        print(response.body);
         // Handle other response codes or errors
         setState(() {
           isLoading = false;
@@ -132,26 +112,18 @@ class _VerifyTenantsPageState extends State<VerifyTenantsPage> {
       ),
       body: Column(
         children: <Widget>[
-          Expanded(
-            child: QRView(
-              key: qrKey,
-              onQRViewCreated: onQRViewCreated,
-            ),
-          ),
           SizedBox(height: 10),
           Text(
             scanMessage,
             style: TextStyle(fontSize: 18),
           ),
           if (isLoading) CircularProgressIndicator(),
+          ElevatedButton(
+            onPressed: sendHardcodedVerificationCode,
+            child: Text('Verify Hardcoded Code'),
+          ),
         ],
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    controller?.dispose();
-    super.dispose();
   }
 }
