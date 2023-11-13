@@ -28,6 +28,8 @@ flutter:
    - assets/price.jpg
    - assets/verify.jpg
    - assets/view.jpg
+   - assets/success.gif
+  
    
   # fonts:
   #   - family: Schyler
