@@ -3,6 +3,8 @@
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flare_flutter/flare_actor.dart';
 import 'dart:convert';
 
 class RoomPricesPage extends StatefulWidget {
@@ -97,6 +99,12 @@ class _RoomPricesPageState extends State<RoomPricesPage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: <Widget>[
+            CachedNetworkImage(
+              imageUrl: 'assets/success.gif', // Replace with your GIF URL
+              width: 40,
+              height: 40,
+              repeat: ImageRepeat.noRepeat, // Play once
+            ),
             buildSectionTitle('Select room capacity to edit', 18),
             const SizedBox(height: 15.0),
             buildDropdown(),

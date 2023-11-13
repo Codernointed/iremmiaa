@@ -34,6 +34,56 @@
 //               "EVAdc0a-05r0-En-011b0-lem-82dc4dbf-4fd5-42e9-8f4b-41188c18234f-enoch-20951781-072024k0-lemon-15:34:33.411574-Grj",
 //         }),
 //       );
+// appBar: AppBar(
+//         shadowColor: Colors.white,
+//         backgroundColor: Colors.white,
+//         leading: IconButton(
+//           icon: const Icon(Icons.arrow_back, color: Color(0xFFF59B15)),
+//           onPressed: () {
+//             Navigator.of(context).pop();
+//           },
+//         ),
+//         title: const Text(
+//           'Scan QR',
+//           style: TextStyle(
+//             fontWeight: FontWeight.w600,
+//             color: Color(0xFFF59B15),
+//             fontSize: 20,
+//           ),
+//         ),
+//         actions: [
+//           Padding(
+//             padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+//             child: IconButton(
+//               icon: const Icon(Icons.flash_on,
+//                   color: Color(0xFFF59B15), size: 30),
+//               onPressed: () {
+//                 // Add an action to navigate to the profile page here.
+//               },
+//             ),
+//           ),
+//           Padding(
+//             padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+//             child: IconButton(
+//               icon: const Icon(Icons.switch_camera,
+//                   color: Color(0xFFF59B15), size: 30),
+//               onPressed: () {
+//                 // Add an action to navigate to the profile page here.
+//               },
+//             ),
+//           ),
+//           Padding(
+//             padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+//             child: IconButton(
+//               icon: const Icon(Icons.account_circle,
+//                   color: Color(0xFFF59B15), size: 35),
+//               onPressed: () {
+//                 // Add an action to navigate to the profile page here.
+//               },
+//             ),
+//           ),
+//         ],
+//       ),
 
 //       if (response.statusCode == 200) {
 //         final responseData = json.decode(response.body);
