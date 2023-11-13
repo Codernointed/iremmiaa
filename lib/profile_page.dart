@@ -71,9 +71,10 @@ class _ProfilePageState extends State<ProfilePage> {
                   color: Colors.black,
                   image: DecorationImage(
                     fit: BoxFit.cover,
-                    image: Image.network(
-                      'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NTYyMDF8MHwxfHNlYXJjaHwxMHx8c3RhcnJ5JTIwbmlnaHR8ZW58MHx8fHwxNjk5NjY2MzAyfDA&ixlib=rb-4.0.3&q=80&w=1080',
-                    ).image,
+                    image: Image.asset('assets/coverphoto.jpeg').image,
+                    // image: Image.network(
+                    //   'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NTYyMDF8MHwxfHNlYXJjaHwxMHx8c3RhcnJ5JTIwbmlnaHR8ZW58MHx8fHwxNjk5NjY2MzAyfDA&ixlib=rb-4.0.3&q=80&w=1080',
+                    // ).image,
                   ),
                 ),
               ),
