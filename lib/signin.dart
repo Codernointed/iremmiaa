@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously, library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:rebook/home_page.dart';
 import 'dart:convert';
@@ -174,7 +175,10 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
                                                 controller:
                                                     emailAddressLoginController,
                                                 obscureText: false,
-                                                maxLength: 100,
+                                                inputFormatters: [
+                                                  LengthLimitingTextInputFormatter(
+                                                      50),
+                                                ],
                                                 decoration:
                                                     const InputDecoration(
                                                   labelText: 'Email Address',
@@ -204,6 +208,10 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
                                                     passwordLoginController,
                                                 obscureText:
                                                     passwordLoginVisibility,
+                                                inputFormatters: [
+                                                  LengthLimitingTextInputFormatter(
+                                                      50),
+                                                ],
                                                 decoration: InputDecoration(
                                                   labelText: 'Password',
                                                   labelStyle: const TextStyle(
