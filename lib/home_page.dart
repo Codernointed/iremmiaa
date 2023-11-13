@@ -104,9 +104,7 @@ class HomePage extends StatelessWidget {
       body: SafeArea(
         child: ListView(
           children: [
-            const SizedBox(
-                height: 20), // Add spacing between AppBar and content
-
+            const SizedBox(height: 20),
             GestureDetector(
               onTap: () {
                 Navigator.push(
@@ -140,7 +138,6 @@ class HomePage extends StatelessWidget {
                 'assets/details.jpg',
               ),
             ),
-
             _buildCard(
               'View Tenants',
               'assets/view.jpg',
