@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:rebook/pages/room_details_page.dart';
 import 'package:rebook/pages/room_prices_page.dart';
 import 'package:rebook/pages/verify_tenants.dart';
+import 'package:rebook/profile_page.dart';
 
 class HomePage extends StatelessWidget {
   final String accessToken;
@@ -95,7 +96,12 @@ class HomePage extends StatelessWidget {
               icon: const Icon(Icons.account_circle,
                   color: Color(0xFFF59B15), size: 35),
               onPressed: () {
-                // Add an action to navigate to the profile page here.
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProfilePage(),
+                  ),
+                );
               },
             ),
           ),
