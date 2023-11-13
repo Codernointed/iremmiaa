@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 // import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ProfilePage extends StatefulWidget {
+  const ProfilePage({super.key});
+
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
@@ -27,7 +29,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildHeader() {
-    return Container(
+    return SizedBox(
       height: 267,
       child: Stack(
         children: [
@@ -43,11 +45,11 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget _buildBackgroundImage() {
     return Align(
-      alignment: AlignmentDirectional(0.00, -1.00),
+      alignment: const AlignmentDirectional(0.00, -1.00),
       child: Container(
         width: double.infinity,
         height: 235,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [
               Color(0xff000000), // Replace with your theme colors
@@ -84,12 +86,12 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget _buildSwitch() {
     return Align(
-      alignment: AlignmentDirectional(0.95, 1.09),
+      alignment: const AlignmentDirectional(0.95, 1.09),
       child: Switch.adaptive(
         value: true, // Replace with your switch value
         onChanged: (newValue) {},
-        activeColor: Color(0xFF959798),
-        activeTrackColor: Color(0xFF959798),
+        activeColor: const Color(0xFF959798),
+        activeTrackColor: const Color(0xFF959798),
         inactiveTrackColor: Colors.white,
         inactiveThumbColor: Colors.black,
       ),
@@ -98,9 +100,9 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget _buildProfileImage() {
     return Align(
-      alignment: AlignmentDirectional(-1.00, 1.00),
+      alignment: const AlignmentDirectional(-1.00, 1.00),
       child: Padding(
-        padding: EdgeInsetsDirectional.fromSTEB(10, 0, 0, 0),
+        padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 0, 0),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(50),
           child: Image.network(
@@ -116,7 +118,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget _buildUserInfo() {
     return Align(
-      alignment: AlignmentDirectional(0.00, 0.00),
+      alignment: const AlignmentDirectional(0.00, 0.00),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -131,11 +133,11 @@ class _ProfilePageState extends State<ProfilePage> {
     return Column(
       children: [
         Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(40, 0, 0, 0),
+          padding: const EdgeInsetsDirectional.fromSTEB(40, 0, 0, 0),
           child: Text(
             title,
             textAlign: TextAlign.start,
-            style: TextStyle(
+            style: const TextStyle(
               fontFamily: 'Outfit',
               color: Colors.black,
               fontSize: 35,
@@ -145,7 +147,7 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         Text(
           subtitle,
-          style: TextStyle(
+          style: const TextStyle(
             fontFamily: 'Outfit',
             fontSize: 30,
           ),
@@ -156,12 +158,12 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget _buildBackButton() {
     return Align(
-      alignment: AlignmentDirectional(-0.91, -0.92),
+      alignment: const AlignmentDirectional(-0.91, -0.92),
       child: IconButton(
         onPressed: () {
           Navigator.of(context).pop();
         },
-        icon: Icon(
+        icon: const Icon(
           Icons.arrow_back,
           size: 24,
           color: Colors.white,
@@ -174,7 +176,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return Container(
       width: double.infinity,
       height: 106,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.white, // Replace with your theme color
       ),
       child: ListView(
@@ -193,13 +195,13 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget _buildStatsItem(IconData icon, String value, String label) {
     return Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(16, 12, 12, 12),
+      padding: const EdgeInsetsDirectional.fromSTEB(16, 12, 12, 12),
       child: Container(
         width: 130,
         height: 100,
         decoration: BoxDecoration(
           color: Colors.grey[200], // Replace with your theme color
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
               blurRadius: 4,
               color: Color(0x34090F13),
@@ -211,21 +213,21 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Row(
           children: [
             Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(10, 0, 0, 0),
+              padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 0, 0),
               child: Icon(
                 icon,
-                color: Color(0xFFF59B15), // Replace with your theme color
+                color: const Color(0xFFF59B15), // Replace with your theme color
                 size: 30,
               ),
             ),
             Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(12, 12, 12, 12),
+              padding: const EdgeInsetsDirectional.fromSTEB(12, 12, 12, 12),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
                     value,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontFamily: 'Plus Jakarta Sans',
                       color: Colors.black, // Replace with your theme color
                       fontSize: 30,
@@ -234,7 +236,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   Text(
                     label,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontFamily: 'Plus Jakarta Sans',
                       color: Colors.grey, // Replace with your theme color
                       fontSize: 15,
@@ -252,9 +254,9 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget _buildEditProfileButton() {
     return Align(
-      alignment: AlignmentDirectional(0.00, 0.00),
+      alignment: const AlignmentDirectional(0.00, 0.00),
       child: Padding(
-        padding: EdgeInsetsDirectional.fromSTEB(16, 10, 16, 10),
+        padding: const EdgeInsetsDirectional.fromSTEB(16, 10, 16, 10),
         child: Container(
           width: double.infinity,
           height: 60,
@@ -266,8 +268,8 @@ class _ProfilePageState extends State<ProfilePage> {
               width: 2,
             ),
           ),
-          alignment: AlignmentDirectional(0.00, 0.00),
-          child: Row(
+          alignment: const AlignmentDirectional(0.00, 0.00),
+          child: const Row(
             children: [
               Padding(
                 padding: EdgeInsetsDirectional.fromSTEB(12, 0, 12, 0),
@@ -302,9 +304,9 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget _buildScannedHistoryButton() {
     return Align(
-      alignment: AlignmentDirectional(0.00, 0.00),
+      alignment: const AlignmentDirectional(0.00, 0.00),
       child: Padding(
-        padding: EdgeInsetsDirectional.fromSTEB(16, 10, 16, 10),
+        padding: const EdgeInsetsDirectional.fromSTEB(16, 10, 16, 10),
         child: Container(
           width: double.infinity,
           height: 60,
@@ -316,8 +318,8 @@ class _ProfilePageState extends State<ProfilePage> {
               width: 2,
             ),
           ),
-          alignment: AlignmentDirectional(0.00, 0.00),
-          child: Row(
+          alignment: const AlignmentDirectional(0.00, 0.00),
+          child: const Row(
             children: [
               Padding(
                 padding: EdgeInsetsDirectional.fromSTEB(12, 0, 12, 0),
@@ -352,9 +354,9 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget _buildStatisticsButton() {
     return Align(
-      alignment: AlignmentDirectional(0.00, 0.00),
+      alignment: const AlignmentDirectional(0.00, 0.00),
       child: Padding(
-        padding: EdgeInsetsDirectional.fromSTEB(16, 10, 16, 10),
+        padding: const EdgeInsetsDirectional.fromSTEB(16, 10, 16, 10),
         child: Container(
           width: double.infinity,
           height: 60,
@@ -366,8 +368,8 @@ class _ProfilePageState extends State<ProfilePage> {
               width: 2,
             ),
           ),
-          alignment: AlignmentDirectional(0.00, 0.00),
-          child: Row(
+          alignment: const AlignmentDirectional(0.00, 0.00),
+          child: const Row(
             children: [
               Padding(
                 padding: EdgeInsetsDirectional.fromSTEB(12, 0, 12, 0),
@@ -402,9 +404,9 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget _buildReportBugButton() {
     return Align(
-      alignment: AlignmentDirectional(0.00, 0.00),
+      alignment: const AlignmentDirectional(0.00, 0.00),
       child: Padding(
-        padding: EdgeInsetsDirectional.fromSTEB(16, 10, 16, 10),
+        padding: const EdgeInsetsDirectional.fromSTEB(16, 10, 16, 10),
         child: Container(
           width: double.infinity,
           height: 60,
@@ -416,8 +418,8 @@ class _ProfilePageState extends State<ProfilePage> {
               width: 2,
             ),
           ),
-          alignment: AlignmentDirectional(0.00, 0.00),
-          child: Row(
+          alignment: const AlignmentDirectional(0.00, 0.00),
+          child: const Row(
             children: [
               Padding(
                 padding: EdgeInsetsDirectional.fromSTEB(12, 0, 12, 0),
@@ -452,18 +454,18 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget _buildLogoutButton() {
     return Align(
-      alignment: AlignmentDirectional(0.00, 0.00),
+      alignment: const AlignmentDirectional(0.00, 0.00),
       child: Padding(
-        padding: EdgeInsetsDirectional.fromSTEB(16, 10, 16, 10),
+        padding: const EdgeInsetsDirectional.fromSTEB(16, 10, 16, 10),
         child: Container(
           width: double.infinity,
           height: 60,
           decoration: BoxDecoration(
-            color: Color(0xFFF59B15), // Replace with your theme color
+            color: const Color(0xFFF59B15), // Replace with your theme color
             borderRadius: BorderRadius.circular(8),
           ),
-          alignment: AlignmentDirectional(0.00, 0.00),
-          child: Row(
+          alignment: const AlignmentDirectional(0.00, 0.00),
+          child: const Row(
             children: [
               Padding(
                 padding: EdgeInsetsDirectional.fromSTEB(12, 0, 12, 0),

@@ -68,6 +68,8 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         shadowColor: Colors.white,
         backgroundColor: Colors.white,
+        automaticallyImplyLeading: false,
+        centerTitle: true,
         leading: null,
         title: const Row(
           children: [

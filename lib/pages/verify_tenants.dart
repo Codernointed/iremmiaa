@@ -60,7 +60,7 @@ class _VerifyTenantsPageState extends State<VerifyTenantsPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ProfilePage(),
+                    builder: (context) => const ProfilePage(),
                   ),
                 );
               },
@@ -101,7 +101,7 @@ class _VerifyTenantsPageState extends State<VerifyTenantsPage> {
             flex: 1,
             child: Center(
                 child: isVerificationDialogShown
-                    ? CircularProgressIndicator()
+                    ? const CircularProgressIndicator()
                     : const Text(
                         "Move camera to scan and verify tenant",
                         style: TextStyle(fontSize: 16),
@@ -159,7 +159,7 @@ class _VerifyTenantsPageState extends State<VerifyTenantsPage> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text('Verification Successful'),
+            title: const Text('Verification Successful'),
             content: Column(
               // crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -183,7 +183,7 @@ class _VerifyTenantsPageState extends State<VerifyTenantsPage> {
                   });
                   Navigator.of(context).pop();
                 },
-                child: Text('Close'),
+                child: const Text('Close'),
               ),
             ],
           );
@@ -195,8 +195,8 @@ class _VerifyTenantsPageState extends State<VerifyTenantsPage> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text('Error'),
-            content: Text('Failed to verify tenant. Please try again.'),
+            title: const Text('Error'),
+            content: const Text('Failed to verify tenant. Please try again.'),
             actions: [
               TextButton(
                 onPressed: () {
@@ -205,7 +205,7 @@ class _VerifyTenantsPageState extends State<VerifyTenantsPage> {
                   });
                   Navigator.of(context).pop();
                 },
-                child: Text('Close'),
+                child: const Text('Close'),
               ),
             ],
           );
