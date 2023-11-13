@@ -40,8 +40,55 @@ class _VerifyTenantsPageState extends State<VerifyTenantsPage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          // ... (previous code)
+        shadowColor: Colors.white,
+        backgroundColor: Colors.white,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Color(0xFFF59B15)),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        title: const Text(
+          'Scan QR',
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            color: Color(0xFFF59B15),
+            fontSize: 20,
           ),
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+            child: IconButton(
+              icon: const Icon(Icons.flash_on,
+                  color: Color(0xFFF59B15), size: 30),
+              onPressed: () {
+                // Add an action to navigate to the profile page here.
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+            child: IconButton(
+              icon: const Icon(Icons.switch_camera,
+                  color: Color(0xFFF59B15), size: 30),
+              onPressed: () {
+                // Add an action to navigate to the profile page here.
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+            child: IconButton(
+              icon: const Icon(Icons.account_circle,
+                  color: Color(0xFFF59B15), size: 35),
+              onPressed: () {
+                // Add an action to navigate to the profile page here.
+              },
+            ),
+          ),
+        ],
+      ),
       body: Column(
         children: <Widget>[
           Expanded(
