@@ -106,8 +106,8 @@ class _ProfilePageState extends State<ProfilePage> {
         padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 0, 0),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(50),
-          child: Image.network(
-            'https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8cHJvZmlsZXxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=900&q=60',
+          child: Image.asset(
+            'assets/profile.jpg',
             width: 80,
             height: 80,
             fit: BoxFit.cover,
