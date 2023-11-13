@@ -174,6 +174,7 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
                                                 controller:
                                                     emailAddressLoginController,
                                                 obscureText: false,
+                                                maxLength: 100,
                                                 decoration:
                                                     const InputDecoration(
                                                   labelText: 'Email Address',
