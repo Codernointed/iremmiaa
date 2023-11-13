@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:rebook/profile_page.dart';
+
 class RoomDetailsPage extends StatefulWidget {
   final String accessToken;
 
@@ -100,7 +102,12 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
               icon: const Icon(Icons.account_circle,
                   color: Color(0xFFF59B15), size: 35),
               onPressed: () {
-                // Add an action to navigate to the profile page here.
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProfilePage(),
+                  ),
+                );
               },
             ),
           ),
