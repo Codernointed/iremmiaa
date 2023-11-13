@@ -68,15 +68,7 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         shadowColor: Colors.white,
         backgroundColor: Colors.white,
-        leading: Padding(
-          padding: const EdgeInsets.all(10.0), // Adjust padding as needed
-          child: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Color(0xFFF59B15)),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ),
+        leading: null,
         title: const Row(
           children: [
             Text(
