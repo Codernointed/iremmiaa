@@ -3,8 +3,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
-import 'package:rebook/home_page.dart';
 import 'dart:convert';
+
+import 'package:rebook/home_page.dart';
 
 class AuthenticateSolo1Widget extends StatefulWidget {
   const AuthenticateSolo1Widget({Key? key}) : super(key: key);
@@ -23,70 +24,80 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
   bool passwordLoginVisibility = true;
   bool isLoading = false;
 
-  // Function to log in and obtain an access token
-  Future<String?> logInAndGetAccessToken(String email, String password) async {
+  String? accessToken;
+  String? refreshToken;
+
+  Future<void> logInAndGetTokens(String email, String password,
+      {bool isRefresh = false}) async {
     final apiUrl = Uri.parse(
         'https://ethenatx.pythonanywhere.com/management/obtain-token/');
 
     try {
-      final response = await http.post(apiUrl,
-          headers: {
-            'Content-Type': 'application/json; charset=UTF-8',
-          },
-          body: jsonEncode({
-            'email': email,
-            'password': password,
-          }));
+      final response = await http.post(
+        apiUrl,
+        headers: {'Content-Type': 'application/json; charset=UTF-8'},
+        body: jsonEncode(
+          isRefresh
+              ? {'refresh': refreshToken}
+              : {'email': email, 'password': password},
+        ),
+      );
 
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body) as Map<String, dynamic>;
-        final accessToken = jsonResponse['access'];
-        // print(accessToken);
-        return accessToken;
+        accessToken = jsonResponse['access'];
+        if (!isRefresh) {
+          refreshToken = jsonResponse['refresh'];
+        }
       } else {
-        return null;
+        accessToken = null;
+        refreshToken = null;
       }
     } catch (e) {
-      // print('Error: $e');
-      return null;
+      accessToken = null;
+      refreshToken = null;
     }
   }
 
-  // Function to handle login button press
-  Future<void> handleLogin() async {
+  Future<void> handleLoginOrRefresh() async {
     final email = emailAddressLoginController.text;
     final password = passwordLoginController.text;
 
-    setState(() {
-      isLoading = true;
-    });
+    setState(() => isLoading = true);
 
-    final accessToken = await logInAndGetAccessToken(email, password);
-
-    setState(() {
-      isLoading = false;
-    });
+    await logInAndGetTokens(email, password);
 
     if (accessToken != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Login Successful!'),
-        ),
-      );
-
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => HomePage(accessToken: accessToken),
-        ),
-      );
+      // Successful login, do something with the access token
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Login Failed. Please check your credentials.'),
-        ),
-      );
+      showSnackBar('Login Failed. Please check your credentials.');
     }
+
+    setState(() => isLoading = false);
+  }
+
+  Future<void> handleLogin() async {
+    await handleLoginOrRefresh();
+
+    if (accessToken != null) {
+      showSnackBar('Login Successful!');
+      navigateToHomePage();
+    } else {
+      showSnackBar('Login Failed. Please check your credentials.');
+    }
+  }
+
+  void showSnackBar(String message) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  void navigateToHomePage() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => HomePage(accessToken: accessToken!)),
+    );
   }
 
   @override
@@ -110,7 +121,7 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
               child: Center(
                 child: Container(
                   width: 290,
-                  height: 490,
+                  height: 460,
                   decoration: BoxDecoration(
                     color: const Color(0x99000000),
                     borderRadius: BorderRadius.circular(15.0),
@@ -136,176 +147,112 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
                             ],
                           ),
                         ),
-                        Expanded(
-                          child: DefaultTabController(
-                            length: 2,
-                            initialIndex: 0,
-                            child: Column(
-                              children: [
-                                const Align(
-                                  alignment: Alignment(0, 0),
-                                  child: TabBar(
-                                    labelColor: Colors.white,
-                                    unselectedLabelColor: Color(0xffd7d7d7),
-                                    tabs: [
-                                      Tab(
-                                        text: 'Sign In',
-                                      ),
-                                      Tab(
-                                        text: 'Sign Up',
-                                      ),
-                                    ],
-                                  ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 20.0),
+                          child: TextFormField(
+                            controller: emailAddressLoginController,
+                            obscureText: false,
+                            inputFormatters: [
+                              LengthLimitingTextInputFormatter(50),
+                            ],
+                            decoration: const InputDecoration(
+                              labelText: 'Email Address',
+                              labelStyle: TextStyle(
+                                color: Color(0xffdedddb),
+                                fontSize: 18,
+                              ),
+                              enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Color(0xFFF59B15),
                                 ),
-                                Expanded(
-                                  child: TabBarView(
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    children: [
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 20.0),
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.max,
-                                          children: [
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  top: 20.0),
-                                              child: TextFormField(
-                                                controller:
-                                                    emailAddressLoginController,
-                                                obscureText: false,
-                                                inputFormatters: [
-                                                  LengthLimitingTextInputFormatter(
-                                                      50),
-                                                ],
-                                                decoration:
-                                                    const InputDecoration(
-                                                  labelText: 'Email Address',
-                                                  labelStyle: TextStyle(
-                                                    color: Color(0xffdedddb),
-                                                    fontSize: 18,
-                                                  ),
-                                                  enabledBorder:
-                                                      UnderlineInputBorder(
-                                                    borderSide: BorderSide(
-                                                      color: Color(0xFFF59B15),
-                                                    ),
-                                                  ),
-                                                ),
-                                                style: const TextStyle(
-                                                  color: Color(0xffdedddb),
-                                                  fontSize: 18,
-                                                ),
-                                                maxLines: null,
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  top: 12.0),
-                                              child: TextFormField(
-                                                controller:
-                                                    passwordLoginController,
-                                                obscureText:
-                                                    passwordLoginVisibility,
-                                                inputFormatters: [
-                                                  LengthLimitingTextInputFormatter(
-                                                      50),
-                                                ],
-                                                decoration: InputDecoration(
-                                                  labelText: 'Password',
-                                                  labelStyle: const TextStyle(
-                                                    color: Color(0xffdedddb),
-                                                    fontSize: 18,
-                                                  ),
-                                                  suffixIcon: InkWell(
-                                                    onTap: () {
-                                                      setState(() {
-                                                        passwordLoginVisibility =
-                                                            !passwordLoginVisibility;
-                                                      });
-                                                    },
-                                                    child: Icon(
-                                                      passwordLoginVisibility
-                                                          ? Icons
-                                                              .visibility_outlined
-                                                          : Icons
-                                                              .visibility_off_outlined,
-                                                      size: 20,
-                                                      color: const Color(
-                                                          0xffdedddb),
-                                                    ),
-                                                  ),
-                                                  enabledBorder:
-                                                      const UnderlineInputBorder(
-                                                    borderSide: BorderSide(
-                                                      color: Color(0xFFF59B15),
-                                                    ),
-                                                  ),
-                                                ),
-                                                style: const TextStyle(
-                                                  color: Color(0xffdedddb),
-                                                  fontSize: 18,
-                                                ),
-                                                maxLines: 1,
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  top: 24.0),
-                                              child: ElevatedButton(
-                                                onPressed: handleLogin,
-                                                style: ElevatedButton.styleFrom(
-                                                  // padding: EdgeInsets.symmetric(
-                                                  //     horizontal:
-                                                  //         50), // Adjust the horizontal padding value to increase the width
-                                                  // You can also use fixedSize property to set a fixed width:
-                                                  fixedSize: const Size(230,
-                                                      30), // Set the desired width and height
-                                                ),
-                                                child: const Text(
-                                                  'Login',
-                                                  style: TextStyle(
-                                                    fontSize: 18,
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  top: 20.0),
-                                              child: TextButton(
-                                                onPressed: () {
-                                                  // Navigate to the forgot password screen
-                                                },
-                                                child: const Text(
-                                                  'Forgot Password?',
-                                                  style: TextStyle(
-                                                    fontSize: 18,
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            if (isLoading)
-                                              const Center(
-                                                child:
-                                                    CircularProgressIndicator(
-                                                  color: Color(0xFFF59B15),
-                                                ),
-                                              ),
-                                          ],
-                                        ),
-                                      ),
-                                      const SizedBox(), // Empty container for Sign Up tab
-                                    ],
-                                  ),
+                              ),
+                            ),
+                            style: const TextStyle(
+                              color: Color(0xffdedddb),
+                              fontSize: 18,
+                            ),
+                            maxLines: null,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 12.0),
+                          child: TextFormField(
+                            controller: passwordLoginController,
+                            obscureText: passwordLoginVisibility,
+                            inputFormatters: [
+                              LengthLimitingTextInputFormatter(50),
+                            ],
+                            decoration: InputDecoration(
+                              labelText: 'Password',
+                              labelStyle: const TextStyle(
+                                color: Color(0xffdedddb),
+                                fontSize: 18,
+                              ),
+                              suffixIcon: InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    passwordLoginVisibility =
+                                        !passwordLoginVisibility;
+                                  });
+                                },
+                                child: Icon(
+                                  passwordLoginVisibility
+                                      ? Icons.visibility_outlined
+                                      : Icons.visibility_off_outlined,
+                                  size: 20,
+                                  color: const Color(0xffdedddb),
                                 ),
-                              ],
+                              ),
+                              enabledBorder: const UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Color(0xFFF59B15),
+                                ),
+                              ),
+                            ),
+                            style: const TextStyle(
+                              color: Color(0xffdedddb),
+                              fontSize: 18,
+                            ),
+                            maxLines: 1,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 24.0),
+                          child: ElevatedButton(
+                            onPressed: handleLogin,
+                            style: ElevatedButton.styleFrom(
+                              fixedSize: const Size(230, 30),
+                            ),
+                            child: const Text(
+                              'Login',
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 20.0),
+                          child: TextButton(
+                            onPressed: () {
+                              // Navigate to the forgot password screen
+                            },
+                            child: const Text(
+                              'Forgot Password?',
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                        if (isLoading)
+                          const Center(
+                            child: CircularProgressIndicator(
+                              color: Color(0xFFF59B15),
+                            ),
+                          ),
                       ],
                     ),
                   ),
