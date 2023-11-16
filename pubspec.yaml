@@ -34,6 +34,8 @@ flutter:
    - assets/coverphoto.jpeg
    - assets/profile.jpg
    - assets/success.gif
+   - assets/Success.gif
+   - assets/Animation.gif
   
    
   # fonts:

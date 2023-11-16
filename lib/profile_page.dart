@@ -159,7 +159,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget _buildBackButton() {
     return Align(
-      alignment: const AlignmentDirectional(-0.91, -0.92),
+      alignment: const AlignmentDirectional(-0.91, -0.62),
       child: IconButton(
         onPressed: () {
           Navigator.of(context).pop();
@@ -201,7 +201,7 @@ class _ProfilePageState extends State<ProfilePage> {
         width: 130,
         height: 100,
         decoration: BoxDecoration(
-          color: Colors.grey[200], // Replace with your theme color
+          color: Colors.grey[200],
           boxShadow: const [
             BoxShadow(
               blurRadius: 4,
@@ -217,7 +217,7 @@ class _ProfilePageState extends State<ProfilePage> {
               padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 0, 0),
               child: Icon(
                 icon,
-                color: const Color(0xFFF59B15), // Replace with your theme color
+                color: const Color(0xFFF59B15),
                 size: 30,
               ),
             ),
