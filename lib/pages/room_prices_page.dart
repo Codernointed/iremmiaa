@@ -177,26 +177,32 @@ class _RoomPricesPageState extends State<RoomPricesPage> {
   }
 
   Widget buildApplyButton() {
+    bool isPriceEntered = newPrice > 0.0;
+
     return SizedBox(
       width: double.infinity,
       height: 35,
       child: ElevatedButton(
-        onPressed: () async {
-          if (selectedCapacity != '...') {
-            if (await updateRoomPrices()) {
-              setState(() {
-                editedEntries.add(EditedEntry(
-                  capacity: int.parse(selectedCapacity),
-                  newPrice: newPrice,
-                ));
-                _textEditingController.text = '';
-              });
-            }
-          } else {
-            showSnackBar('Select Room Capacity');
-          }
-        },
-        child: const Row(
+        onPressed: isPriceEntered
+            ? () async {
+                if (selectedCapacity != '...') {
+                  if (await updateRoomPrices()) {
+                    setState(() {
+                      editedEntries.add(EditedEntry(
+                        capacity: int.parse(selectedCapacity),
+                        newPrice: newPrice,
+                      ));
+                      _textEditingController.text = '';
+                      newPrice = 0.0; // Reset newPrice
+                      selectedCapacity = '...'; // Reset selectedCapacity
+                    });
+                  }
+                } else {
+                  showSnackBar('Select Room Capacity');
+                }
+              }
+            : null, // Disable button when room price is not entered
+        child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text('Apply Changes', style: TextStyle(fontSize: 16)),
