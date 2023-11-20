@@ -1,13 +1,9 @@
-// ignore_for_file: library_private_types_in_public_api
-
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:rebook/profile_page.dart';
-
-import '../Custom_classes/Frame_painter.dart';
 
 class VerifyTenantsPage extends StatefulWidget {
   final String accessToken;
@@ -94,30 +90,49 @@ class _VerifyTenantsPageState extends State<VerifyTenantsPage> {
         children: <Widget>[
           Expanded(
             flex: 5,
-            child: CustomPaint(
-              painter: FramePainter(),
-              child: QRView(
-                key: qrKey,
-                onQRViewCreated: _onQRViewCreated,
-              ),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                QRView(
+                  key: qrKey,
+                  onQRViewCreated: _onQRViewCreated,
+                ),
+                _buildOverlay(),
+              ],
             ),
           ),
           Expanded(
             flex: 1,
             child: Center(
-                child: isVerificationDialogShown
-                    ? const CircularProgressIndicator()
-                    : const Text(
-                        "Move camera to scan and verify tenant",
-                        style: TextStyle(fontSize: 16),
-                      )
-                // : Text(
-                //     'Result: \n $result',
-                //     style: TextStyle(fontSize: 16),
-                //   ),
-                ),
+              child: isVerificationDialogShown
+                  ? const CircularProgressIndicator()
+                  : const Text(
+                      "Move camera to scan and verify tenant",
+                      style: TextStyle(fontSize: 16),
+                    ),
+            ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildOverlay() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.black.withOpacity(0.6),
+      ),
+      child: Center(
+        child: Container(
+          width: MediaQuery.of(context).size.width * 0.6,
+          height: MediaQuery.of(context).size.width * 0.6,
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: Colors.white,
+              width: 2,
+            ),
+          ),
+        ),
       ),
     );
   }
