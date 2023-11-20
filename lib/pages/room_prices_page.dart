@@ -151,7 +151,7 @@ class _RoomPricesPageState extends State<RoomPricesPage> {
       items: availableCapacities.map((capacity) {
         return DropdownMenuItem<String>(
           value: capacity,
-          child: Text('Capacity $capacity'),
+          child: Text('$capacity in a room'),
         );
       }).toList(),
     );
@@ -226,7 +226,7 @@ class _RoomPricesPageState extends State<RoomPricesPage> {
           final entry = editedEntries[index];
           return Card(
             child: ListTile(
-              title: Text('Capacity ${entry.capacity}',
+              title: Text('${entry.capacity} in a room',
                   style: const TextStyle(fontSize: 18)),
               subtitle: Text(
                 'New Price: GH₵${entry.newPrice.toStringAsFixed(2)}',
