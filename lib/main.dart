@@ -43,8 +43,8 @@ class MyApp extends StatelessWidget {
       //       accessToken: ModalRoute.of(context)!.settings.arguments as String),
       // },
       // initialRoute: '/login',
-      // home: ProfilePage(),
-      home: const AuthenticateSolo1Widget(),
+      home: ProfilePage(),
+      // home: const AuthenticateSolo1Widget(),
     );
   }
 }
