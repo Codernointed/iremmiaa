@@ -7,6 +7,8 @@ import 'dart:convert';
 
 import 'package:rebook/profile_page.dart';
 
+import '../Custom_classes/Frame_painter.dart';
+
 class VerifyTenantsPage extends StatefulWidget {
   final String accessToken;
 
@@ -92,9 +94,12 @@ class _VerifyTenantsPageState extends State<VerifyTenantsPage> {
         children: <Widget>[
           Expanded(
             flex: 5,
-            child: QRView(
-              key: qrKey,
-              onQRViewCreated: _onQRViewCreated,
+            child: CustomPaint(
+              painter: FramePainter(),
+              child: QRView(
+                key: qrKey,
+                onQRViewCreated: _onQRViewCreated,
+              ),
             ),
           ),
           Expanded(
@@ -158,34 +163,43 @@ class _VerifyTenantsPageState extends State<VerifyTenantsPage> {
       showDialog(
         context: context,
         builder: (context) {
-          return AlertDialog(
-            title: const Text('Verification Successful'),
-            content: Column(
-              // crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Image.asset(
-                  'assets/success.gif',
-                  width: 40,
-                  height: 40,
+          return Center(
+            child: SizedBox(
+              child: AlertDialog(
+                title: const Text('Verification Successful'),
+                content: Column(
+                  children: [
+                    Image.asset(
+                      'assets/Success.gif',
+                      width: 90,
+                      height: 90,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Hostel: ${data['hostel_name']}'),
+                        Text('Room Number: ${data['room_number']}'),
+                        Text('Name: ${data['tenant_name']}'),
+                        Text('ID: ${data['student_id']}'),
+                        Text('Status: ${data['checked_in_status']}'),
+                      ],
+                    ),
+                  ],
                 ),
-                Text('Hostel: ${data['hostel_name']}'),
-                Text('Room Number: ${data['room_number']}'),
-                Text('Name: ${data['tenant_name']}'),
-                Text('ID: ${data['student_id']}'),
-                Text('Stat: ${data['checked_in_status']}'),
-              ],
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  setState(() {
-                    isVerificationDialogShown = false;
-                  });
-                  Navigator.of(context).pop();
-                },
-                child: const Text('Close'),
+                contentPadding: EdgeInsets.all(16), // Adjust content padding
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      setState(() {
+                        isVerificationDialogShown = false;
+                      });
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Close'),
+                  ),
+                ],
               ),
-            ],
+            ),
           );
         },
       );
