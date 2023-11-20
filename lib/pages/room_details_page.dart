@@ -247,12 +247,12 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
                       decoration:
                           const InputDecoration(labelText: 'Room Price'),
                     ),
-                    TextFormField(
-                      controller: roomBedSpaceController,
-                      keyboardType: TextInputType.number,
-                      decoration:
-                          const InputDecoration(labelText: 'Space Left'),
-                    ),
+                    // TextFormField(
+                    //   controller: roomBedSpaceController,
+                    //   keyboardType: TextInputType.number,
+                    //   decoration:
+                    //       const InputDecoration(labelText: 'Space Left'),
+                    // ),
                     CheckboxListTile(
                       title: const Text('Occupied'),
                       value: isOccupied,
