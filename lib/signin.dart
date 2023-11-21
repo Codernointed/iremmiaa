@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import 'package:rebook/home_page.dart';
+import 'package:rebook/pages/home_page.dart';
 
 class AuthenticateSolo1Widget extends StatefulWidget {
   const AuthenticateSolo1Widget({Key? key}) : super(key: key);
