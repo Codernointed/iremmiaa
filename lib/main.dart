@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:rebook/profile_page.dart';
+// import 'package:rebook/profile_page.dart';
 
 import 'signin.dart';
 
@@ -43,8 +43,8 @@ class MyApp extends StatelessWidget {
       //       accessToken: ModalRoute.of(context)!.settings.arguments as String),
       // },
       // initialRoute: '/login',
-      home: ProfilePage(),
-      // home: const AuthenticateSolo1Widget(),
+      // home: ProfilePage(),
+      home: const AuthenticateSolo1Widget(),
     );
   }
 }

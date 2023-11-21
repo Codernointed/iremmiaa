@@ -21,6 +21,7 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
   String searchText = '';
   int selectedCapacity = 0;
   bool showOccupiedOnly = false;
+  bool isLoading = true;
 
   List<Room> rooms = [];
   List<Room> filteredRooms = [];
@@ -46,6 +47,9 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
   }
 
   Future<void> fetchRooms() async {
+    setState(() {
+      isLoading = true;
+    });
     final response = await http.get(
       Uri.parse('https://ethenatx.pythonanywhere.com/management/rooms/'),
       headers: {
@@ -59,7 +63,9 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
       rooms = roomData.map((roomJson) => Room.fromJson(roomJson)).toList();
       // print("filter: $rooms");
       filteredRooms = List.from(rooms);
-      setState(() {});
+      setState(() {
+        isLoading = false;
+      });
     } else {
       throw Exception('Failed to load rooms');
     }
@@ -118,9 +124,17 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
           _buildSearchBar(),
           _buildFilter(),
           Expanded(
-            child: filteredRooms.isEmpty
-                ? const Center(child: Text('No rooms match your criteria.'))
-                : _buildRoomGridView(),
+            child: isLoading
+                ? Center(
+                    child: const Column(
+                    children: [
+                      CircularProgressIndicator(),
+                      Text("Fetching Rooms")
+                    ],
+                  ))
+                : filteredRooms.isEmpty
+                    ? const Center(child: Text('No rooms match your criteria.'))
+                    : _buildRoomGridView(),
           ),
         ],
       ),
