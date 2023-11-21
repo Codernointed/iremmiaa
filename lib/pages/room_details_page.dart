@@ -126,12 +126,8 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
           Expanded(
             child: isLoading
                 ? Center(
-                    child: const Column(
-                    children: [
-                      CircularProgressIndicator(),
-                      Text("Fetching Rooms")
-                    ],
-                  ))
+                    child: CircularProgressIndicator(),
+                  )
                 : filteredRooms.isEmpty
                     ? const Center(child: Text('No rooms match your criteria.'))
                     : _buildRoomGridView(),
