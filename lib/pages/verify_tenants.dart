@@ -5,6 +5,8 @@ import 'dart:convert';
 
 import 'package:rebook/profile_page.dart';
 
+import '../Custom_classes/Flashlight.dart';
+
 class VerifyTenantsPage extends StatefulWidget {
   final String accessToken;
 
@@ -19,6 +21,7 @@ class _VerifyTenantsPageState extends State<VerifyTenantsPage> {
   QRViewController? controller;
   String? result;
   bool isVerificationDialogShown = false;
+  bool isFlashlightOn = false;
 
   @override
   void reassemble() {
@@ -51,16 +54,13 @@ class _VerifyTenantsPageState extends State<VerifyTenantsPage> {
         actions: [
           Padding(
             padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
-            child: IconButton(
-              icon: const Icon(Icons.flash_on,
-                  color: Color(0xFFF59B15), size: 30),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const ProfilePage(),
-                  ),
-                );
+            child: FlashlightButton(
+              isFlashlightOn: isFlashlightOn,
+              onPressed: (value) {
+                // Implement flashlight functionality here
+                setState(() {
+                  isFlashlightOn = value;
+                });
               },
             ),
           ),
@@ -70,7 +70,7 @@ class _VerifyTenantsPageState extends State<VerifyTenantsPage> {
               icon: const Icon(Icons.switch_camera,
                   color: Color(0xFFF59B15), size: 30),
               onPressed: () {
-                // Add an action to navigate to the profile page here.
+                controller?.flipCamera();
               },
             ),
           ),
