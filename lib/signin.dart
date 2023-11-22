@@ -106,6 +106,7 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         key: scaffoldKey,
+        resizeToAvoidBottomInset: false,
         body: Builder(
           builder: (BuildContext context) {
             return Container(
