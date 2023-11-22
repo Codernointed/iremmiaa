@@ -52,12 +52,21 @@ class _VerifyTenantsPageState extends State<VerifyTenantsPage> {
           ),
         ),
         actions: [
+          // Padding(
+          //   padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+          //   child: IconButton(
+          //     icon: const Icon(Icons.flash_on,
+          //         color: Color(0xFFF59B15), size: 30),
+          //     onPressed: () {},
+          //   ),
+          // ),
           Padding(
             padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
             child: FlashlightButton(
               isFlashlightOn: isFlashlightOn,
               onPressed: (value) {
-                // Implement flashlight functionality here
+                // Turn on/off flashlight
+                controller?.toggleFlash();
                 setState(() {
                   isFlashlightOn = value;
                 });
@@ -80,7 +89,12 @@ class _VerifyTenantsPageState extends State<VerifyTenantsPage> {
               icon: const Icon(Icons.account_circle,
                   color: Color(0xFFF59B15), size: 35),
               onPressed: () {
-                // Add an action to navigate to the profile page here.
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ProfilePage(),
+                  ),
+                );
               },
             ),
           ),
@@ -120,7 +134,7 @@ class _VerifyTenantsPageState extends State<VerifyTenantsPage> {
   Widget _buildOverlay() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.6),
+        color: Colors.black.withOpacity(0.3),
       ),
       child: Center(
         child: Container(
@@ -178,42 +192,41 @@ class _VerifyTenantsPageState extends State<VerifyTenantsPage> {
       showDialog(
         context: context,
         builder: (context) {
-          return Center(
-            child: SizedBox(
-              child: AlertDialog(
-                title: const Text('Verification Successful'),
-                content: Column(
-                  children: [
-                    Image.asset(
-                      'assets/Success.gif',
-                      width: 90,
-                      height: 90,
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Hostel: ${data['hostel_name']}'),
-                        Text('Room Number: ${data['room_number']}'),
-                        Text('Name: ${data['tenant_name']}'),
-                        Text('ID: ${data['student_id']}'),
-                        Text('Status: ${data['checked_in_status']}'),
-                      ],
-                    ),
-                  ],
-                ),
-                contentPadding: EdgeInsets.all(16), // Adjust content padding
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      setState(() {
-                        isVerificationDialogShown = false;
-                      });
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text('Close'),
+          return Container(
+            height: 200,
+            child: AlertDialog(
+              title: const Text('Verification Successful'),
+              content: Column(
+                children: [
+                  Image.asset(
+                    'assets/Success.gif',
+                    width: 90,
+                    height: 90,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Hostel: ${data['hostel_name']}'),
+                      Text('Room Number: ${data['room_number']}'),
+                      Text('Name: ${data['tenant_name']}'),
+                      Text('ID: ${data['student_id']}'),
+                      Text('Status: ${data['checked_in_status']}'),
+                    ],
                   ),
                 ],
               ),
+              contentPadding: EdgeInsets.all(16), // Adjust content padding
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      isVerificationDialogShown = false;
+                    });
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Close'),
+                ),
+              ],
             ),
           );
         },
@@ -223,20 +236,32 @@ class _VerifyTenantsPageState extends State<VerifyTenantsPage> {
       showDialog(
         context: context,
         builder: (context) {
-          return AlertDialog(
-            title: const Text('Error'),
-            content: const Text('Failed to verify tenant. Please try again.'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  setState(() {
-                    isVerificationDialogShown = false;
-                  });
-                  Navigator.of(context).pop();
-                },
-                child: const Text('Close'),
+          return Container(
+            height: 200,
+            child: AlertDialog(
+              title: const Text('Error'),
+              content: Column(
+                children: [
+                  Image.asset(
+                    'assets/Error.gif',
+                    width: 60,
+                    height: 60,
+                  ),
+                  const Text('Failed to verify tenant. Please try again.'),
+                ],
               ),
-            ],
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      isVerificationDialogShown = false;
+                    });
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Close'),
+                ),
+              ],
+            ),
           );
         },
       );
