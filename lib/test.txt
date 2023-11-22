@@ -49,6 +49,16 @@ AlertDialog(
           ),
         ),
         actions: [
+          1
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+            child: IconButton(
+              icon: const Icon(Icons.flash_on,
+                  color: Color(0xFFF59B15), size: 30),
+              onPressed: () {},
+            ),
+          ),
+          2
           Padding(
             padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
             child: IconButton(
