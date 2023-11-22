@@ -257,12 +257,12 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
                       decoration:
                           const InputDecoration(labelText: 'Room Price'),
                     ),
-                    // TextFormField(
-                    //   controller: roomBedSpaceController,
-                    //   keyboardType: TextInputType.number,
-                    //   decoration:
-                    //       const InputDecoration(labelText: 'Space Left'),
-                    // ),
+                    TextFormField(
+                      controller: roomBedSpaceController,
+                      keyboardType: TextInputType.number,
+                      decoration:
+                          const InputDecoration(labelText: 'Space Left'),
+                    ),
                     CheckboxListTile(
                       title: const Text('Occupied'),
                       value: isOccupied,
@@ -353,6 +353,7 @@ class Room {
   final int roomCapacity;
   final double roomPrice;
   final int roomBedSpace;
+  final int noOfTenants;
   final bool occupied;
   final String roomId;
 
@@ -361,6 +362,7 @@ class Room {
     required this.roomCapacity,
     required this.roomPrice,
     required this.roomBedSpace,
+    required this.noOfTenants,
     required this.occupied,
     required this.roomId,
   });
@@ -371,6 +373,7 @@ class Room {
       roomCapacity: json['room_capacity'] ?? 0,
       roomPrice: double.parse(json['room_price']),
       roomBedSpace: json['bed_space_left'] ?? 0,
+      noOfTenants: json['number_of_tenants'] ?? 0,
       occupied: json['occupied'] ?? false,
       roomId: json['room_id'],
     );
@@ -381,6 +384,7 @@ class Room {
     int? roomCapacity,
     double? roomPrice,
     int? roomBedSpace,
+    int? noOfTenants,
     bool? occupied,
   }) {
     return Room(
@@ -388,6 +392,7 @@ class Room {
       roomCapacity: roomCapacity ?? this.roomCapacity,
       roomPrice: roomPrice ?? this.roomPrice,
       roomBedSpace: roomBedSpace ?? this.roomBedSpace,
+      noOfTenants: noOfTenants ?? this.noOfTenants,
       occupied: occupied ?? this.occupied,
       roomId: roomId,
     );
@@ -444,7 +449,7 @@ class RoomCard extends StatelessWidget {
                 child: Text(
                   'GH₵${room.roomPrice.toStringAsFixed(2)}',
                   style: const TextStyle(
-                    fontSize: 17, // Adjust the font size as needed
+                    fontSize: 17,
                   ),
                 ),
               ),
@@ -452,7 +457,15 @@ class RoomCard extends StatelessWidget {
                 child: Text(
                   'Space Left: ${room.roomBedSpace}',
                   style: const TextStyle(
-                    fontSize: 18, // Adjust the font size as needed
+                    fontSize: 18,
+                  ),
+                ),
+              ),
+              Flexible(
+                child: Text(
+                  'Tenants: ${room.noOfTenants}',
+                  style: const TextStyle(
+                    fontSize: 18,
                   ),
                 ),
               ),
