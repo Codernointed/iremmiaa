@@ -17,9 +17,7 @@ class FlashlightButton extends StatelessWidget {
         color: Color(0xFFF59B15),
         size: 30,
       ),
-      onPressed: () {
-        onPressed(!isFlashlightOn);
-      },
+      onPressed: () => onPressed(!isFlashlightOn),
     );
   }
 }
