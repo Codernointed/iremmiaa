@@ -2,9 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-
+import 'package:rebook/Custom_classes/auth_service.dart';
 import 'package:rebook/pages/home_page.dart';
 
 class AuthenticateSolo1Widget extends StatefulWidget {
@@ -24,40 +22,7 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
   bool passwordLoginVisibility = true;
   bool isLoading = false;
 
-  String? accessToken;
-  String? refreshToken;
-
-  Future<void> logInAndGetTokens(String email, String password,
-      {bool isRefresh = false}) async {
-    final apiUrl = Uri.parse(
-        'https://ethenatx.pythonanywhere.com/management/obtain-token/');
-
-    try {
-      final response = await http.post(
-        apiUrl,
-        headers: {'Content-Type': 'application/json; charset=UTF-8'},
-        body: jsonEncode(
-          isRefresh
-              ? {'refresh': refreshToken}
-              : {'email': email, 'password': password},
-        ),
-      );
-
-      if (response.statusCode == 200) {
-        final jsonResponse = json.decode(response.body) as Map<String, dynamic>;
-        accessToken = jsonResponse['access'];
-        if (!isRefresh) {
-          refreshToken = jsonResponse['refresh'];
-        }
-      } else {
-        accessToken = null;
-        refreshToken = null;
-      }
-    } catch (e) {
-      accessToken = null;
-      refreshToken = null;
-    }
-  }
+  AuthService authService = AuthService();
 
   Future<void> handleLoginOrRefresh() async {
     final email = emailAddressLoginController.text;
@@ -65,10 +30,11 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
 
     setState(() => isLoading = true);
 
-    await logInAndGetTokens(email, password);
+    await authService.logInAndGetTokens(email, password);
 
-    if (accessToken != null) {
-      // Successful login, do something with the access token
+    if (authService.accessToken != null) {
+      // Successful login or refresh, do something with the access token
+      navigateToHomePage();
     } else {
       showSnackBar('Login Failed. Please check your credentials.');
     }
@@ -79,7 +45,7 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
   Future<void> handleLogin() async {
     await handleLoginOrRefresh();
 
-    if (accessToken != null) {
+    if (authService.accessToken != null) {
       showSnackBar('Login Successful!');
       navigateToHomePage();
     } else {
@@ -96,9 +62,28 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => HomePage(accessToken: accessToken!)),
+          builder: (context) =>
+              HomePage(accessToken: authService.accessToken!)),
     );
   }
+
+  @override
+  void initState() {
+    super.initState();
+    // checkExistingTokens();
+  }
+
+  // Future<void> checkExistingTokens() async {
+  //   final accessToken =
+  //       await authService.secureStorage.read(key: 'access_token');
+  //   final refreshToken =
+  //       await authService.secureStorage.read(key: 'refresh_token');
+
+  //   if (accessToken != null && refreshToken != null) {
+  //     // Tokens exist, navigate to home page
+  //     navigateToHomePage();
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
