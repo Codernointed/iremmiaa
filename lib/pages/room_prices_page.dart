@@ -263,7 +263,7 @@ class _RoomPricesPageState extends State<RoomPricesPage> {
             child: const Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text('Delete All Changes', style: TextStyle(fontSize: 16)),
+                Text('Clear All Changes', style: TextStyle(fontSize: 16)),
                 SizedBox(width: 5),
                 Icon(Icons.delete, size: 18),
               ],
