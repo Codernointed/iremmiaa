@@ -203,7 +203,7 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
     return GridView.builder(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        childAspectRatio: 0.88,
+        childAspectRatio: 0.8,
       ),
       itemCount: filteredRooms.isEmpty ? rooms.length : filteredRooms.length,
       shrinkWrap: true,
@@ -427,6 +427,7 @@ class RoomCard extends StatelessWidget {
         child: IntrinsicHeight(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 'Room No: ${room.roomNo}',
@@ -436,45 +437,35 @@ class RoomCard extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 4.0),
-              Flexible(
-                child: Text(
-                  'Capacity: ${room.roomCapacity}',
-                  style: const TextStyle(
-                    fontSize: 18, // Adjust the font size as needed
-                  ),
+              const SizedBox(height: 0.0),
+              Text(
+                'Capacity: ${room.roomCapacity}',
+                style: const TextStyle(
+                  fontSize: 18, // Adjust the font size as needed
                 ),
               ),
-              Flexible(
-                child: Text(
-                  'GH₵${room.roomPrice.toStringAsFixed(2)}',
-                  style: const TextStyle(
-                    fontSize: 17,
-                  ),
+              Text(
+                'GH₵${room.roomPrice.toStringAsFixed(2)}',
+                style: const TextStyle(
+                  fontSize: 17,
                 ),
               ),
-              Flexible(
-                child: Text(
-                  'Space Left: ${room.roomBedSpace}',
-                  style: const TextStyle(
-                    fontSize: 18,
-                  ),
+              Text(
+                'Space Left: ${room.roomBedSpace}',
+                style: const TextStyle(
+                  fontSize: 18,
                 ),
               ),
-              Flexible(
-                child: Text(
-                  'Tenants: ${room.noOfTenants}',
-                  style: const TextStyle(
-                    fontSize: 18,
-                  ),
+              Text(
+                'Tenants: ${room.noOfTenants}',
+                style: const TextStyle(
+                  fontSize: 18,
                 ),
               ),
-              Flexible(
-                child: Text(
-                  'Occupied: ${room.occupied ? 'Yes' : 'No'}',
-                  style: const TextStyle(
-                    fontSize: 18, // Adjust the font size as needed
-                  ),
+              Text(
+                'Occupied: ${room.occupied ? 'Yes' : 'No'}',
+                style: const TextStyle(
+                  fontSize: 18, // Adjust the font size as needed
                 ),
               ),
               const SizedBox(height: 7),
