@@ -203,7 +203,7 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
     return GridView.builder(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        childAspectRatio: 0.85,
+        childAspectRatio: 0.88,
       ),
       itemCount: filteredRooms.isEmpty ? rooms.length : filteredRooms.length,
       shrinkWrap: true,
@@ -477,7 +477,7 @@ class RoomCard extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 9),
+              const SizedBox(height: 7),
               ElevatedButton(
                 onPressed: () => onEdit(room),
                 child: const Text('Edit'),
