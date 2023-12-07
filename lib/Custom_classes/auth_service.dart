@@ -134,11 +134,11 @@ class AuthService {
           refreshToken = jsonResponse['refresh'];
         }
         await _storeTokens();
-      } else if (response.statusCode == 401) {
+      } else if (response.statusCode == 401 && !isRefresh) {
         // Token expired, try refreshing
         if (await _refreshAccessToken()) {
           // Retry login after refresh
-          await logInAndGetTokens(email, password);
+          await logInAndGetTokens(email, password, isRefresh: true);
         }
       } else {
         accessToken = null;
@@ -154,7 +154,7 @@ class AuthService {
     try {
       final response = await http.post(
         Uri.parse(
-            'https://ethenatx.pythonanywhere.com/management/obtain-token/'),
+            'https://ethenatx.pythonanywhere.com/management/refresh-token/'),
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
         },

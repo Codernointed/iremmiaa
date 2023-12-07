@@ -1,3 +1,4 @@
+//signin page
 // ignore_for_file: use_build_context_synchronously, library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
@@ -59,11 +60,11 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
   }
 
   void navigateToHomePage() {
-    Navigator.push(
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-          builder: (context) =>
-              HomePage(accessToken: authService.accessToken!)),
+        builder: (context) => HomePage(accessToken: authService.accessToken!),
+      ),
     );
   }
 
@@ -71,8 +72,26 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
   void initState() {
     super.initState();
     // checkExistingTokens();
+    checkTokensAndNavigate();
   }
 
+  Future<void> checkTokensAndNavigate() async {
+    final accessToken =
+        await authService.secureStorage.read(key: 'access_token');
+    final refreshToken =
+        await authService.secureStorage.read(key: 'refresh_token');
+
+    if (accessToken != null && refreshToken != null) {
+      // Tokens exist, attempt to refresh and navigate to home page
+      await handleLoginOrRefresh();
+      if (authService.accessToken != null) {
+        navigateToHomePage();
+      } else {
+        // If refresh fails, show an error and offer a login option
+        showSnackBar('Token refresh failed. Please log in again.');
+      }
+    }
+  }
   // Future<void> checkExistingTokens() async {
   //   final accessToken =
   //       await authService.secureStorage.read(key: 'access_token');
@@ -81,7 +100,10 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
 
   //   if (accessToken != null && refreshToken != null) {
   //     // Tokens exist, navigate to home page
-  //     navigateToHomePage();
+  //     await authService.logInAndGetTokens("", "", isRefresh: true);
+  //     if (authService.accessToken != null) {
+  //       navigateToHomePage();
+  //     }
   //   }
   // }
 
@@ -205,7 +227,10 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
                         Padding(
                           padding: const EdgeInsets.only(top: 24.0),
                           child: ElevatedButton(
-                            onPressed: handleLogin,
+                            onPressed: () async {
+                              FocusScope.of(context).unfocus();
+                              handleLogin();
+                            },
                             style: ElevatedButton.styleFrom(
                               fixedSize: const Size(230, 30),
                             ),
