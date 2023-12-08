@@ -1,14 +1,58 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-// import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:http/http.dart' as http;
+import 'package:cached_network_image/cached_network_image.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+  final String accessToken;
+
+  const ProfilePage({Key? key, required this.accessToken}) : super(key: key);
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  late String hostelName;
+  late String managerName;
+  late String managerProfilePicture;
+  late String hostelImage;
+  late int numberOfRooms;
+  late int numberOfTenants;
+  late int numberOfRoomsOccupied;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
+  Future<void> fetchData() async {
+    final url =
+        'https://ethenatx.pythonanywhere.com/management/management-profile/';
+
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {'Authorization': 'Bearer ${widget.accessToken}'},
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      setState(() {
+        hostelName = data['hostel_name'];
+        managerName = data['manager'];
+        managerProfilePicture = data['hostel_manager_profile_picture'];
+        hostelImage = data['hostel_image'];
+        numberOfRooms = int.parse(data['number_of_rooms']);
+        numberOfTenants = int.parse(data['number_of_tenants']);
+        numberOfRoomsOccupied = int.parse(data['number_rooms_occupied']);
+      });
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,11 +61,11 @@ class _ProfilePageState extends State<ProfilePage> {
           children: [
             _buildHeader(),
             _buildStats(),
-            _buildEditProfileButton(),
-            _buildScannedHistoryButton(),
-            _buildStatisticsButton(),
-            _buildReportBugButton(),
-            _buildLogoutButton(),
+            _buildButton('Edit Profile', Icons.edit),
+            _buildButton('Scanned History', Icons.qr_code_scanner_rounded),
+            _buildButton('Statistics', Icons.insert_chart_outlined_outlined),
+            _buildButton('Report an issue or bug', Icons.bug_report_rounded),
+            _buildButton('Logout', Icons.logout, color: Colors.amber),
           ],
         ),
       ),
@@ -49,12 +93,9 @@ class _ProfilePageState extends State<ProfilePage> {
       child: Container(
         width: double.infinity,
         height: 235,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              Color(0xff000000), // Replace with your theme colors
-              Color(0xffffffff),
-            ],
+            colors: [Color(0xff000000), Color(0xffffffff)],
             stops: [0, 1],
             begin: AlignmentDirectional(0, -1),
             end: AlignmentDirectional(0, 1),
@@ -67,15 +108,9 @@ class _ProfilePageState extends State<ProfilePage> {
               child: Container(
                 width: double.infinity,
                 height: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.black,
-                  image: DecorationImage(
-                    fit: BoxFit.cover,
-                    image: Image.asset('assets/coverphoto.jpeg').image,
-                    // image: Image.network(
-                    //   'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NTYyMDF8MHwxfHNlYXJjaHwxMHx8c3RhcnJ5JTIwbmlnaHR8ZW58MHx8fHwxNjk5NjY2MzAyfDA&ixlib=rb-4.0.3&q=80&w=1080',
-                    // ).image,
-                  ),
+                child: CachedNetworkImage(
+                  imageUrl: hostelImage,
+                  fit: BoxFit.cover,
                 ),
               ),
             ),
@@ -89,7 +124,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return Align(
       alignment: const AlignmentDirectional(0.95, 1.09),
       child: Switch.adaptive(
-        value: true, // Replace with your switch value
+        value: true,
         onChanged: (newValue) {},
         activeColor: const Color(0xFF959798),
         activeTrackColor: const Color(0xFF959798),
@@ -106,8 +141,8 @@ class _ProfilePageState extends State<ProfilePage> {
         padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 0, 0),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(50),
-          child: Image.asset(
-            'assets/profile.jpg',
+          child: CachedNetworkImage(
+            imageUrl: managerProfilePicture,
             width: 80,
             height: 80,
             fit: BoxFit.cover,
@@ -124,7 +159,7 @@ class _ProfilePageState extends State<ProfilePage> {
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          _buildUserInfoText('Hostel Name', 'Username'),
+          _buildUserInfoText(hostelName, managerName),
         ],
       ),
     );
@@ -178,7 +213,7 @@ class _ProfilePageState extends State<ProfilePage> {
       width: double.infinity,
       height: 106,
       decoration: const BoxDecoration(
-        color: Colors.white, // Replace with your theme color
+        color: Colors.white,
       ),
       child: ListView(
         padding: EdgeInsets.zero,
@@ -186,9 +221,11 @@ class _ProfilePageState extends State<ProfilePage> {
         shrinkWrap: true,
         scrollDirection: Axis.horizontal,
         children: [
-          _buildStatsItem(Icons.bed, '6', 'Rooms'),
-          _buildStatsItem(Icons.supervisor_account_rounded, '0', 'Tenants'),
-          _buildStatsItem(Icons.door_back_door, '0', 'Occupied'),
+          _buildStatsItem(Icons.bed, numberOfRooms.toString(), 'Rooms'),
+          _buildStatsItem(Icons.supervisor_account_rounded,
+              numberOfTenants.toString(), 'Tenants'),
+          _buildStatsItem(Icons.door_back_door,
+              numberOfRoomsOccupied.toString(), 'Occupied'),
         ],
       ),
     );
@@ -230,7 +267,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     value,
                     style: const TextStyle(
                       fontFamily: 'Plus Jakarta Sans',
-                      color: Colors.black, // Replace with your theme color
+                      color: Colors.black,
                       fontSize: 30,
                       fontWeight: FontWeight.normal,
                     ),
@@ -239,7 +276,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     label,
                     style: const TextStyle(
                       fontFamily: 'Plus Jakarta Sans',
-                      color: Colors.grey, // Replace with your theme color
+                      color: Colors.grey,
                       fontSize: 15,
                       fontWeight: FontWeight.normal,
                     ),
@@ -253,7 +290,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildEditProfileButton() {
+  Widget _buildButton(String text, IconData icon, {Color? color}) {
     return Align(
       alignment: const AlignmentDirectional(0.00, 0.00),
       child: Padding(
@@ -262,7 +299,7 @@ class _ProfilePageState extends State<ProfilePage> {
           width: double.infinity,
           height: 60,
           decoration: BoxDecoration(
-            color: Colors.grey[200], // Replace with your theme color
+            color: color ?? Colors.grey[200],
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
               color: Colors.white,
@@ -270,22 +307,22 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ),
           alignment: const AlignmentDirectional(0.00, 0.00),
-          child: const Row(
+          child: Row(
             children: [
               Padding(
                 padding: EdgeInsetsDirectional.fromSTEB(12, 0, 12, 0),
                 child: Icon(
-                  Icons.edit,
-                  color: Colors.grey, // Replace with your theme color
+                  icon,
+                  color: Colors.grey,
                 ),
               ),
               Expanded(
                 child: Text(
-                  'Edit Profile',
-                  style: TextStyle(
+                  text,
+                  style: const TextStyle(
                     fontFamily: 'Outfit',
                     fontSize: 15,
-                    color: Colors.black, // Replace with your theme color
+                    color: Colors.black,
                   ),
                 ),
               ),
@@ -294,195 +331,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: Icon(
                   Icons.chevron_right_rounded,
                   size: 24,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildScannedHistoryButton() {
-    return Align(
-      alignment: const AlignmentDirectional(0.00, 0.00),
-      child: Padding(
-        padding: const EdgeInsetsDirectional.fromSTEB(16, 10, 16, 10),
-        child: Container(
-          width: double.infinity,
-          height: 60,
-          decoration: BoxDecoration(
-            color: Colors.grey[200], // Replace with your theme color
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(
-              color: Colors.white,
-              width: 2,
-            ),
-          ),
-          alignment: const AlignmentDirectional(0.00, 0.00),
-          child: const Row(
-            children: [
-              Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(12, 0, 12, 0),
-                child: Icon(
-                  Icons.qr_code_scanner_rounded,
-                  color: Colors.grey, // Replace with your theme color
-                ),
-              ),
-              Expanded(
-                child: Text(
-                  'Scanned History',
-                  style: TextStyle(
-                    fontFamily: 'Outfit',
-                    fontSize: 15,
-                    color: Colors.black, // Replace with your theme color
-                  ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(0, 0, 12, 0),
-                child: Icon(
-                  Icons.chevron_right_rounded,
-                  size: 24,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildStatisticsButton() {
-    return Align(
-      alignment: const AlignmentDirectional(0.00, 0.00),
-      child: Padding(
-        padding: const EdgeInsetsDirectional.fromSTEB(16, 10, 16, 10),
-        child: Container(
-          width: double.infinity,
-          height: 60,
-          decoration: BoxDecoration(
-            color: Colors.grey[200], // Replace with your theme color
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(
-              color: Colors.white,
-              width: 2,
-            ),
-          ),
-          alignment: const AlignmentDirectional(0.00, 0.00),
-          child: const Row(
-            children: [
-              Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(12, 0, 12, 0),
-                child: Icon(
-                  Icons.insert_chart_outlined_outlined,
-                  color: Colors.grey, // Replace with your theme color
-                ),
-              ),
-              Expanded(
-                child: Text(
-                  'Statistics',
-                  style: TextStyle(
-                    fontFamily: 'Outfit',
-                    fontSize: 15,
-                    color: Colors.black, // Replace with your theme color
-                  ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(0, 0, 12, 0),
-                child: Icon(
-                  Icons.chevron_right_rounded,
-                  size: 24,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildReportBugButton() {
-    return Align(
-      alignment: const AlignmentDirectional(0.00, 0.00),
-      child: Padding(
-        padding: const EdgeInsetsDirectional.fromSTEB(16, 10, 16, 10),
-        child: Container(
-          width: double.infinity,
-          height: 60,
-          decoration: BoxDecoration(
-            color: Colors.grey[200], // Replace with your theme color
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(
-              color: Colors.white,
-              width: 2,
-            ),
-          ),
-          alignment: const AlignmentDirectional(0.00, 0.00),
-          child: const Row(
-            children: [
-              Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(12, 0, 12, 0),
-                child: Icon(
-                  Icons.bug_report_rounded,
-                  color: Colors.grey, // Replace with your theme color
-                ),
-              ),
-              Expanded(
-                child: Text(
-                  'Report an issue or bug',
-                  style: TextStyle(
-                    fontFamily: 'Outfit',
-                    fontSize: 15,
-                    color: Colors.black, // Replace with your theme color
-                  ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(0, 0, 12, 0),
-                child: Icon(
-                  Icons.chevron_right_rounded,
-                  size: 24,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLogoutButton() {
-    return Align(
-      alignment: const AlignmentDirectional(0.00, 0.00),
-      child: Padding(
-        padding: const EdgeInsetsDirectional.fromSTEB(16, 10, 16, 10),
-        child: Container(
-          width: double.infinity,
-          height: 60,
-          decoration: BoxDecoration(
-            color: const Color(0xFFF59B15), // Replace with your theme color
-            borderRadius: BorderRadius.circular(8),
-          ),
-          alignment: const AlignmentDirectional(0.00, 0.00),
-          child: const Row(
-            children: [
-              Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(12, 0, 12, 0),
-                child: Icon(
-                  Icons.logout,
-                  size: 20,
-                ),
-              ),
-              Expanded(
-                child: Text(
-                  'Logout',
-                  style: TextStyle(
-                    fontFamily: 'Outfit',
-                    fontSize: 15,
-                    color: Colors.black, // Replace with your theme color
-                  ),
                 ),
               ),
             ],

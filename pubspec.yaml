@@ -15,6 +15,7 @@ dependencies:
   google_fonts: ^6.1.0
   font_awesome_flutter: ^10.4.0
   flutter_secure_storage: ^5.0.0
+  cached_network_image: ^3.3.0
   
 
 dev_dependencies:
@@ -31,7 +32,7 @@ flutter:
    - assets/verify.jpg
    - assets/view.jpg
    - assets/coverphoto.jpeg
-   - assets/profile.jpg
+   - assets/unknown_profile.jpg
    - assets/Error.gif
    - assets/Success.gif
    - assets/Animation.gif
