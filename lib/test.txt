@@ -1,3 +1,10 @@
+enabledBorder: const UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Color(0xFFF59B15),
+                                ),
+                              ),
+
+
 AlertDialog(
               title: const Text('Verification Successful'),
               content: Column(
