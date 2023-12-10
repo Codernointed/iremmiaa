@@ -145,7 +145,7 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                "Guudnyt",
+                                "Bookmie",
                                 style: TextStyle(
                                   fontSize: 38,
                                   fontWeight: FontWeight.w700,
