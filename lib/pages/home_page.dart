@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:rebook/pages/room_details_page.dart';
-import 'package:rebook/pages/room_prices_page.dart';
-import 'package:rebook/pages/verify_tenants.dart';
-import 'package:rebook/profile_page.dart';
+import '/pages/room_details_page.dart';
+import '/pages/room_prices_page.dart';
+import '/pages/verify_tenants.dart';
+import '/profile_page.dart';
 
 class HomePage extends StatelessWidget {
   final String accessToken;
@@ -87,7 +87,9 @@ class HomePage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ProfilePage(),
+                    builder: (context) => ProfilePage(
+                      accessToken: accessToken,
+                    ),
                   ),
                 );
               },

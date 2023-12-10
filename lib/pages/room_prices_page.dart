@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import 'package:rebook/profile_page.dart';
+import '/profile_page.dart';
 
 class RoomPricesPage extends StatefulWidget {
   final String accessToken;
@@ -92,7 +92,9 @@ class _RoomPricesPageState extends State<RoomPricesPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ProfilePage(),
+                    builder: (context) => ProfilePage(
+                      accessToken: widget.accessToken,
+                    ),
                   ),
                 );
               },

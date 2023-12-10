@@ -3,7 +3,7 @@ import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import 'package:rebook/profile_page.dart';
+import '/profile_page.dart';
 
 import '../Custom_classes/Flashlight.dart';
 
@@ -92,7 +92,8 @@ class _VerifyTenantsPageState extends State<VerifyTenantsPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const ProfilePage(),
+                    builder: (context) =>
+                        ProfilePage(accessToken: widget.accessToken),
                   ),
                 );
               },
@@ -192,11 +193,11 @@ class _VerifyTenantsPageState extends State<VerifyTenantsPage> {
       showDialog(
         context: context,
         builder: (context) {
-          return Container(
-            height: 200,
-            child: AlertDialog(
-              title: const Text('Verification Successful'),
-              content: Column(
+          return AlertDialog(
+            title: const Text('Verification Successful'),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Image.asset(
                     'assets/Success.gif',
@@ -215,53 +216,106 @@ class _VerifyTenantsPageState extends State<VerifyTenantsPage> {
                   ),
                 ],
               ),
-              contentPadding: EdgeInsets.all(16), // Adjust content padding
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                      isVerificationDialogShown = false;
-                    });
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('Close'),
-                ),
-              ],
             ),
+            contentPadding: EdgeInsets.all(16), // Adjust content padding
+            actions: [
+              TextButton(
+                onPressed: () {
+                  setState(() {
+                    isVerificationDialogShown = false;
+                  });
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Close'),
+              ),
+            ],
           );
+          // return Container(
+          //   height: 20,
+          //   child: AlertDialog(
+          //     title: const Text('Verification Successful'),
+          //     content: Column(
+          //       children: [
+          //         Image.asset(
+          //           'assets/Success.gif',
+          //           width: 90,
+          //           height: 90,
+          //         ),
+          //         Column(
+          //           crossAxisAlignment: CrossAxisAlignment.start,
+          //           children: [
+          //             Text('Hostel: ${data['hostel_name']}'),
+          //             Text('Room Number: ${data['room_number']}'),
+          //             Text('Name: ${data['tenant_name']}'),
+          //             Text('ID: ${data['student_id']}'),
+          //             Text('Status: ${data['checked_in_status']}'),
+          //           ],
+          //         ),
+          //       ],
+          //     ),
+          //     contentPadding: EdgeInsets.all(16), // Adjust content padding
+          //     actions: [
+          //       TextButton(
+          //         onPressed: () {
+          //           setState(() {
+          //             isVerificationDialogShown = false;
+          //           });
+          //           Navigator.of(context).pop();
+          //         },
+          //         child: const Text('Close'),
+          //       ),
+          //     ],
+          //   ),
+          // );
         },
       );
     } else {
-      // Handle errors
+      // showDialog(
+      //   context: context,
+      //   builder: (context) {
+      //     return AlertDialog(
+      //       title: Text('Error'),
+      //       content: Text('Tenant V-code not valid.'),
+      //       actions: [
+      //         TextButton(
+      //           onPressed: () {
+      //             Navigator.of(context).pop();
+      //           },
+      //           child: Text('Close'),
+      //         ),
+      //       ],
+      //     );
+      //   },
+      // );
       showDialog(
         context: context,
         builder: (context) {
-          return Container(
-            height: 200,
-            child: AlertDialog(
-              title: const Text('Error'),
-              content: Column(
+          return AlertDialog(
+            title: const Text('Error'),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Image.asset(
                     'assets/Error.gif',
                     width: 60,
                     height: 60,
                   ),
-                  const Text('Failed to verify tenant. Please try again.'),
+                  const Text('Tenant V-code not valid.'),
                 ],
               ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                      isVerificationDialogShown = false;
-                    });
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('Close'),
-                ),
-              ],
             ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  setState(() {
+                    isVerificationDialogShown = false;
+                  });
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Close'),
+              ),
+            ],
           );
         },
       );
