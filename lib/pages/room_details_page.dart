@@ -85,7 +85,7 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        shadowColor: Colors.white,
+        elevation: 0,
         backgroundColor: Colors.white,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Color(0xFFF59B15)),

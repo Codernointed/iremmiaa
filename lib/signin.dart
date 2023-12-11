@@ -3,8 +3,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:rebook/Custom_classes/auth_service.dart';
-import 'package:rebook/pages/home_page.dart';
+import 'Custom_classes/auth_service.dart';
+import 'pages/home_page.dart';
 
 class AuthenticateSolo1Widget extends StatefulWidget {
   const AuthenticateSolo1Widget({Key? key}) : super(key: key);

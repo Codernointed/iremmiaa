@@ -60,7 +60,7 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        shadowColor: Colors.white,
+        elevation: 0,
         backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
         centerTitle: true,
