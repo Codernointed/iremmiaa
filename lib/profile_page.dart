@@ -1,8 +1,7 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:cached_network_image/cached_network_image.dart';
+import '/pages/edit_profile_page.dart';
 
 class ProfilePage extends StatefulWidget {
   final String accessToken;
@@ -14,13 +13,13 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  late String hostelName;
-  late String managerName;
-  late String managerProfilePicture;
-  late String hostelImage;
-  late int numberOfRooms;
-  late int numberOfTenants;
-  late int numberOfRoomsOccupied;
+  String hostelName = '';
+  String managerName = '';
+  String managerProfilePicture = 'assets/unknown_profile.jpg';
+  String hostelImage = '';
+  int numberOfRooms = 0;
+  int numberOfTenants = 0;
+  int numberOfRoomsOccupied = 0;
 
   @override
   void initState() {
@@ -32,24 +31,32 @@ class _ProfilePageState extends State<ProfilePage> {
     final url =
         'https://ethenatx.pythonanywhere.com/management/management-profile/';
 
-    final response = await http.get(
-      Uri.parse(url),
-      headers: {'Authorization': 'Bearer ${widget.accessToken}'},
-    );
+    try {
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {'Authorization': 'Bearer ${widget.accessToken}'},
+      );
 
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      setState(() {
-        hostelName = data['hostel_name'];
-        managerName = data['manager'];
-        managerProfilePicture = data['hostel_manager_profile_picture'];
-        hostelImage = data['hostel_image'];
-        numberOfRooms = int.parse(data['number_of_rooms']);
-        numberOfTenants = int.parse(data['number_of_tenants']);
-        numberOfRoomsOccupied = int.parse(data['number_rooms_occupied']);
-      });
-    } else {
-      throw Exception('Failed to load data');
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        print(response.statusCode);
+        print(response.body);
+        print(data);
+        setState(() {
+          hostelName = data['hostel_name'] ?? '';
+          managerName = data['manager'] ?? '';
+          numberOfRooms = data['number_of_rooms'] ?? 0;
+          numberOfTenants = data['number_of_tenants'] ?? 0;
+          numberOfRoomsOccupied = data['number_rooms_occupied'] ?? 0;
+          // managerProfilePicture = data['hostel_manager_profile_picture']
+          hostelImage = data['hostel_image'] ?? 'assets/coverphoto.jpeg';
+        });
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      print('Error fetching data: $e');
+      // Handle the error appropriately
     }
   }
 
@@ -61,7 +68,19 @@ class _ProfilePageState extends State<ProfilePage> {
           children: [
             _buildHeader(),
             _buildStats(),
-            _buildButton('Edit Profile', Icons.edit),
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EditProfilePage(
+                      accessToken: widget.accessToken,
+                    ),
+                  ),
+                );
+              },
+              child: _buildButton('Edit Profile', Icons.edit),
+            ),
             _buildButton('Scanned History', Icons.qr_code_scanner_rounded),
             _buildButton('Statistics', Icons.insert_chart_outlined_outlined),
             _buildButton('Report an issue or bug', Icons.bug_report_rounded),
@@ -108,9 +127,12 @@ class _ProfilePageState extends State<ProfilePage> {
               child: Container(
                 width: double.infinity,
                 height: double.infinity,
-                child: CachedNetworkImage(
-                  imageUrl: hostelImage,
-                  fit: BoxFit.cover,
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                  image: DecorationImage(
+                    fit: BoxFit.cover,
+                    image: NetworkImage(hostelImage),
+                  ),
                 ),
               ),
             ),
@@ -141,8 +163,8 @@ class _ProfilePageState extends State<ProfilePage> {
         padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 0, 0),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(50),
-          child: CachedNetworkImage(
-            imageUrl: managerProfilePicture,
+          child: Image.asset(
+            managerProfilePicture,
             width: 80,
             height: 80,
             fit: BoxFit.cover,
@@ -181,11 +203,14 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ),
         ),
-        Text(
-          subtitle,
-          style: const TextStyle(
-            fontFamily: 'Outfit',
-            fontSize: 30,
+        Padding(
+          padding: const EdgeInsetsDirectional.fromSTEB(25, 0, 0, 0),
+          child: Text(
+            subtitle,
+            style: const TextStyle(
+              fontFamily: 'Outfit',
+              fontSize: 30,
+            ),
           ),
         ),
       ],

@@ -18,10 +18,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
   TextEditingController managerContactController = TextEditingController();
   TextEditingController hostelContactController = TextEditingController();
   TextEditingController mobileMoneyController = TextEditingController();
-  TextEditingController priceRangeController = TextEditingController();
+  TextEditingController startPriceController = TextEditingController();
+  TextEditingController endPriceController = TextEditingController();
   TextEditingController locationController = TextEditingController();
-
-  List<String> priceRanges = ["2003-56006", "3000-6000", "5000-10000"];
 
   @override
   void initState() {
@@ -42,12 +41,20 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
+        // Get the price range
+        String priceRange = data['price_range'];
+
+        // Split the price range
+        List<String> prices = priceRange.split('-');
+
         setState(() {
           hostelNameController.text = data['hostel_name'] ?? '';
           managerContactController.text = data['manager_contact'] ?? '';
           hostelContactController.text = data['hostel_contact'] ?? '';
           mobileMoneyController.text = data['mobile_money'] ?? '';
-          priceRangeController.text = data['price_range'] ?? '';
+          // Set the start and end price controllers
+          startPriceController.text = prices[0];
+          endPriceController.text = prices[1];
           locationController.text = data['location'] ?? '';
         });
       } else {
@@ -60,9 +67,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   Future<void> updateProfile() async {
+    String priceRange =
+        '${startPriceController.text}-${endPriceController.text}';
     final url =
         'https://ethenatx.pythonanywhere.com/management/management-profile/';
-
     try {
       final response = await http.put(
         Uri.parse(url),
@@ -75,7 +83,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           "manager_contact": managerContactController.text,
           "hostel_contact": hostelContactController.text,
           "mobile_money": mobileMoneyController.text,
-          "price_range": priceRangeController.text,
+          "price_range": priceRange,
           "location": locationController.text,
         }),
       );
@@ -107,8 +115,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             _buildTextField('Manager Contact', managerContactController),
             _buildTextField('Hostel Contact', hostelContactController),
             _buildTextField('Mobile Money', mobileMoneyController),
-            _buildDropdownField(
-                'Price Range', priceRanges, priceRangeController),
+            _buildPriceRangeFields(),
             _buildTextField('Location', locationController),
             const SizedBox(height: 20),
             SizedBox(
@@ -139,33 +146,25 @@ class _EditProfilePageState extends State<EditProfilePage> {
         controller: controller,
         decoration: InputDecoration(
           labelText: label,
-          // border: OutlineInputBorder(),
         ),
       ),
     );
   }
 
-  Widget _buildDropdownField(
-      String label, List<String> items, TextEditingController controller) {
+  Widget _buildPriceRangeFields() {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
-      child: DropdownButtonFormField<String>(
-        value: controller.text,
-        onChanged: (newValue) {
-          setState(() {
-            controller.text = newValue!;
-          });
-        },
-        items: items.map((item) {
-          return DropdownMenuItem<String>(
-            value: item,
-            child: Text(item),
-          );
-        }).toList(),
-        decoration: InputDecoration(
-          labelText: label,
-          border: OutlineInputBorder(),
-        ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: _buildTextField('Start Price', startPriceController),
+          ),
+          SizedBox(width: 16),
+          Expanded(
+            child: _buildTextField('End Price', endPriceController),
+          ),
+        ],
       ),
     );
   }
