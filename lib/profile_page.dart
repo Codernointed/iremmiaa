@@ -219,7 +219,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget _buildBackButton() {
     return Align(
-      alignment: const AlignmentDirectional(-0.91, -0.62),
+      alignment: const AlignmentDirectional(-0.91, -0.8),
       child: IconButton(
         onPressed: () {
           Navigator.of(context).pop();
