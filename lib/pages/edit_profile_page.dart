@@ -20,6 +20,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   TextEditingController mobileMoneyController = TextEditingController();
   TextEditingController startPriceController = TextEditingController();
   TextEditingController endPriceController = TextEditingController();
+  TextEditingController mainWebsiteController = TextEditingController();
   TextEditingController locationController = TextEditingController();
 
   @override
@@ -55,6 +56,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           // Set the start and end price controllers
           startPriceController.text = prices[0];
           endPriceController.text = prices[1];
+          mainWebsiteController.text = data['main_website'];
           locationController.text = data['location'] ?? '';
         });
       } else {
@@ -84,6 +86,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           "hostel_contact": hostelContactController.text,
           "mobile_money": mobileMoneyController.text,
           "price_range": priceRange,
+          "main_website": mainWebsiteController.text,
           "location": locationController.text,
         }),
       );
@@ -104,37 +107,76 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit Profile'),
+        elevation: 0,
+        backgroundColor: Colors.white,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Color(0xFFF59B15)),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        title: const Text(
+          'Edit Profile',
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            color: Color(0xFFF59B15),
+            fontSize: 25,
+          ),
+        ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            _buildTextField('Hostel Name', hostelNameController),
-            _buildTextField('Manager Contact', managerContactController),
-            _buildTextField('Hostel Contact', hostelContactController),
-            _buildTextField('Mobile Money', mobileMoneyController),
-            _buildPriceRangeFields(),
-            _buildTextField('Location', locationController),
-            const SizedBox(height: 20),
-            SizedBox(
-              width: double.infinity,
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildTextField('Hostel Name', hostelNameController),
+                _buildTextField('Manager Contact', managerContactController),
+                _buildTextField('Hostel Contact', hostelContactController),
+                _buildTextField('Mobile Money', mobileMoneyController),
+                _buildPriceRangeFields(),
+                _buildTextField('Main Website', mainWebsiteController),
+                _buildTextField('Location', locationController),
+                // const SizedBox(height: 20),
+                // SizedBox(
+                //   width: double.infinity,
+                //   height: 35,
+                //   child: ElevatedButton(
+                //     onPressed: updateProfile,
+                //     child: Row(
+                //       mainAxisSize: MainAxisSize.min,
+                //       children: [
+                //         Text('Update Profile', style: TextStyle(fontSize: 16)),
+                //         SizedBox(width: 5),
+                //         FaIcon(FontAwesomeIcons.solidFloppyDisk, size: 18),
+                //       ],
+                //     ),
+                //   ),
+                // ),
+              ],
+            ),
+          ),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: SizedBox(
               height: 35,
               child: ElevatedButton(
                 onPressed: updateProfile,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text('Update Profile', style: TextStyle(fontSize: 16)),
+                    Text('Update Profile'),
                     SizedBox(width: 5),
-                    FaIcon(FontAwesomeIcons.solidFloppyDisk, size: 18),
+                    FaIcon(FontAwesomeIcons.solidFloppyDisk),
                   ],
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
