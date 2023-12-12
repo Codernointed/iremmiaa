@@ -124,59 +124,53 @@ class _EditProfilePageState extends State<EditProfilePage> {
           ),
         ),
       ),
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildTextField('Hostel Name', hostelNameController),
-                _buildTextField('Manager Contact', managerContactController),
-                _buildTextField('Hostel Contact', hostelContactController),
-                _buildTextField('Mobile Money', mobileMoneyController),
-                _buildPriceRangeFields(),
-                _buildTextField('Main Website', mainWebsiteController),
-                _buildTextField('Location', locationController),
-                // const SizedBox(height: 20),
-                // SizedBox(
-                //   width: double.infinity,
-                //   height: 35,
-                //   child: ElevatedButton(
-                //     onPressed: updateProfile,
-                //     child: Row(
-                //       mainAxisSize: MainAxisSize.min,
-                //       children: [
-                //         Text('Update Profile', style: TextStyle(fontSize: 16)),
-                //         SizedBox(width: 5),
-                //         FaIcon(FontAwesomeIcons.solidFloppyDisk, size: 18),
-                //       ],
-                //     ),
-                //   ),
-                // ),
-              ],
-            ),
-          ),
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: SizedBox(
-              height: 35,
-              child: ElevatedButton(
-                onPressed: updateProfile,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
+      body: Container(
+        height: double.infinity,
+        child: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Text('Update Profile'),
-                    SizedBox(width: 5),
-                    FaIcon(FontAwesomeIcons.solidFloppyDisk),
+                    _buildTextField('Hostel Name', hostelNameController),
+                    _buildTextField(
+                        'Manager Contact', managerContactController),
+                    _buildTextField('Hostel Contact', hostelContactController),
+                    _buildTextField('Mobile Money', mobileMoneyController),
+                    _buildPriceRangeFields(),
+                    _buildTextField('Main Website', mainWebsiteController),
+                    _buildTextField('Main Website', mainWebsiteController),
+                    _buildTextField('Main Website', mainWebsiteController),
+                    _buildTextField('Main Website', mainWebsiteController),
+                    _buildTextField('Main Website', mainWebsiteController),
+                    _buildTextField('Main Website', mainWebsiteController),
+                    _buildTextField('Location', locationController),
                   ],
                 ),
               ),
             ),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SizedBox(
+                width: double.infinity,
+                height: 35,
+                child: ElevatedButton(
+                  onPressed: updateProfile,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text('Update Profile', style: TextStyle(fontSize: 16)),
+                      SizedBox(width: 8),
+                      FaIcon(FontAwesomeIcons.solidFloppyDisk, size: 18),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
