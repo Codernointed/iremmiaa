@@ -15,7 +15,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   String hostelName = '';
   String managerName = '';
-  String managerProfilePicture = 'assets/unknown_profile.jpg';
+  String managerProfilePicture = '';
   String hostelImage = '';
   int numberOfRooms = 0;
   int numberOfTenants = 0;
@@ -39,17 +39,17 @@ class _ProfilePageState extends State<ProfilePage> {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        print(response.statusCode);
-        print(response.body);
-        print(data);
+
         setState(() {
           hostelName = data['hostel_name'] ?? '';
           managerName = data['manager'] ?? '';
           numberOfRooms = data['number_of_rooms'] ?? 0;
           numberOfTenants = data['number_of_tenants'] ?? 0;
           numberOfRoomsOccupied = data['number_rooms_occupied'] ?? 0;
-          // managerProfilePicture = data['hostel_manager_profile_picture']
-          hostelImage = data['hostel_image'] ?? 'assets/coverphoto.jpeg';
+          final baseUrl = 'https://ethenatx.pythonanywhere.com';
+          managerProfilePicture =
+              '$baseUrl${data['hostel_manager_profile_picture']}';
+          hostelImage = '$baseUrl${data['hostel_image']}';
         });
       } else {
         throw Exception('Failed to load data');
@@ -163,7 +163,7 @@ class _ProfilePageState extends State<ProfilePage> {
         padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 0, 0),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(50),
-          child: Image.asset(
+          child: Image.network(
             managerProfilePicture,
             width: 80,
             height: 80,
