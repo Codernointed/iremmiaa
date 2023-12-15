@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:cached_network_image/cached_network_image.dart'; // Import the package
 import '/pages/edit_profile_page.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -106,6 +107,8 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  // ...
+
   Widget _buildBackgroundImage() {
     return Align(
       alignment: const AlignmentDirectional(0.00, -1.00),
@@ -131,12 +134,33 @@ class _ProfilePageState extends State<ProfilePage> {
                   color: Colors.black,
                   image: DecorationImage(
                     fit: BoxFit.cover,
-                    image: NetworkImage(hostelImage),
+                    image: CachedNetworkImageProvider(hostelImage),
                   ),
                 ),
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProfileImage() {
+    return Align(
+      alignment: const AlignmentDirectional(-1.00, 1.00),
+      child: Padding(
+        padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 0, 0),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(50),
+          child: CachedNetworkImage(
+            // Use CachedNetworkImage widget
+            imageUrl: managerProfilePicture,
+            width: 80,
+            height: 80,
+            fit: BoxFit.cover,
+            placeholder: (context, url) => CircularProgressIndicator(),
+            errorWidget: (context, url, error) => CircularProgressIndicator(),
+          ),
         ),
       ),
     );
@@ -152,24 +176,6 @@ class _ProfilePageState extends State<ProfilePage> {
         activeTrackColor: const Color(0xFF959798),
         inactiveTrackColor: Colors.white,
         inactiveThumbColor: Colors.black,
-      ),
-    );
-  }
-
-  Widget _buildProfileImage() {
-    return Align(
-      alignment: const AlignmentDirectional(-1.00, 1.00),
-      child: Padding(
-        padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 0, 0),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(50),
-          child: Image.network(
-            managerProfilePicture,
-            width: 80,
-            height: 80,
-            fit: BoxFit.cover,
-          ),
-        ),
       ),
     );
   }
