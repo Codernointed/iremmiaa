@@ -422,7 +422,7 @@ class RoomCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12.0),
       ),
       margin: const EdgeInsets.all(8.0),
-      color: const Color(0xFFF59B15).withOpacity(0.1),
+      color: Colors.white70,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: IntrinsicHeight(
