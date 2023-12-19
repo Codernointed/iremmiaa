@@ -166,7 +166,7 @@ class _RoomPricesPageState extends State<RoomPricesPage> {
         Expanded(
           child: TextField(
             controller: _textEditingController,
-            keyboardType: TextInputType.number,
+            keyboardType: TextInputType.numberWithOptions(decimal: true),
             onChanged: (value) {
               setState(() {
                 newPrice = double.tryParse(value) ?? 0.0;
