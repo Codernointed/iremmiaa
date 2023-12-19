@@ -85,7 +85,7 @@ class _ProfilePageState extends State<ProfilePage> {
             _buildButton('Scanned History', Icons.qr_code_scanner_rounded),
             _buildButton('Statistics', Icons.insert_chart_outlined_outlined),
             _buildButton('Report an issue or bug', Icons.bug_report_rounded),
-            _buildButton('Logout', Icons.logout, color: Colors.amber),
+            _buildButton('Logout', Icons.logout, color: Color(0xFFF59B15)),
           ],
         ),
       ),
