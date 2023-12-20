@@ -1,3 +1,4 @@
+import 'package:bookmie/pages/view_tenants.dart';
 import 'package:flutter/material.dart';
 import '/pages/room_details_page.dart';
 import '/pages/room_prices_page.dart';
@@ -134,9 +135,22 @@ class HomePage extends StatelessWidget {
                 'assets/details.jpg',
               ),
             ),
-            _buildCard(
-              'View Tenants',
-              'assets/view.jpg',
+            GestureDetector(
+              onTap: () {
+                // Navigate to RoomDetailsPage
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ViewTenantsPage(
+                      accessToken: accessToken,
+                    ),
+                  ),
+                );
+              },
+              child: _buildCard(
+                'View Tenants',
+                'assets/view.jpg',
+              ),
             ),
             GestureDetector(
               onTap: () {
