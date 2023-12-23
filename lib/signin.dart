@@ -47,7 +47,7 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
     await handleLoginOrRefresh();
 
     if (authService.accessToken != null) {
-      showSnackBar('Login Successful!');
+      // showSnackBar('Login Successful!');
       navigateToHomePage();
     } else {
       showSnackBar('Login Failed. Please check your credentials.');
@@ -81,9 +81,13 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
     final refreshToken =
         await authService.secureStorage.read(key: 'refresh_token');
 
+    print('Stored Access Token: $accessToken');
+    print('Stored Refresh Token: $refreshToken');
+
     if (accessToken != null && refreshToken != null) {
       // Tokens exist, attempt to refresh and navigate to home page
       await handleLoginOrRefresh();
+      print('After Refresh - Access Token: ${authService.accessToken}');
       if (authService.accessToken != null) {
         navigateToHomePage();
       } else {
@@ -273,6 +277,48 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
           },
         ),
       ),
+    );
+  }
+}
+
+class SplashAndAuthenticate extends StatefulWidget {
+  const SplashAndAuthenticate({Key? key}) : super(key: key);
+
+  @override
+  _SplashAndAuthenticateState createState() => _SplashAndAuthenticateState();
+}
+
+class _SplashAndAuthenticateState extends State<SplashAndAuthenticate> {
+  @override
+  void initState() {
+    super.initState();
+    // Simulate a delay before navigating to AuthenticateSolo1Widget
+    Future.delayed(const Duration(seconds: 4), () {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) => const AuthenticateSolo1Widget()),
+      );
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height,
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+          fit: BoxFit.cover,
+          image: AssetImage('assets/splash_screen.jpeg'),
+        ),
+      ),
+      // child: Scaffold(
+      //   body: Center(
+      //     child: Image.asset(
+      //         'assets/splash_screen.jpeg'), // Replace with your splash image
+      //   ),
+      // ),
     );
   }
 }
