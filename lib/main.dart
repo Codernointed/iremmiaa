@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-// import 'package:rebook/profile_page.dart';
 
 import 'signin.dart';
 
@@ -33,18 +32,7 @@ class MyApp extends StatelessWidget {
           },
         ),
       ),
-      // routes: {
-      //   '/login': (context) => AuthenticateSolo1Widget(),
-      //   '/home': (context) => HomePage(
-      //       accessToken: ModalRoute.of(context)!.settings.arguments as String),
-      //   '/price': (context) => RoomPricesPage(
-      //       accessToken: ModalRoute.of(context)!.settings.arguments as String),
-      //   '/detail': (context) => RoomDetailsPage(
-      //       accessToken: ModalRoute.of(context)!.settings.arguments as String),
-      // },
-      // initialRoute: '/login',
-      // home: ProfilePage(),
-      home: const AuthenticateSolo1Widget(),
+      home: const SplashAndAuthenticate(),
     );
   }
 }
