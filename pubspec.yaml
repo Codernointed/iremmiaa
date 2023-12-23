@@ -16,7 +16,7 @@ dependencies:
   font_awesome_flutter: ^10.4.0
   flutter_secure_storage: ^5.0.0
   cached_network_image: ^3.3.0
-  image_picker: ^0.8.8
+  # image_picker: ^0.8.8
   
 
 dev_dependencies:
@@ -37,6 +37,7 @@ flutter:
    - assets/Error.gif
    - assets/Success.gif
    - assets/Animation.gif
+   - assets/splash_screen.jpeg
   
    
   # fonts:
