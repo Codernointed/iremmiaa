@@ -294,17 +294,26 @@ class _RoomPricesPageState extends State<RoomPricesPage> {
       (responseJson["message"]);
 
       // print(response.statusCode);
-      showSnackBar(responseJson["message"]);
+      showSnackBar(responseJson["message"],
+          backgroundColor:
+              responseJson["success"] == true ? Colors.green : Colors.red);
+
       return true;
     } catch (e) {
-      showSnackBar('An error occurred. Please check your network connection.');
+      showSnackBar('An error occurred. Please check your network connection.',
+          backgroundColor: Colors.red);
+      showSnackBar('Select Room Capacity', backgroundColor: Colors.red);
       return false;
     }
   }
 
-  void showSnackBar(String message) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(message)));
+  void showSnackBar(String message, {Color? backgroundColor}) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: backgroundColor ?? Colors.grey, // Default to gray
+        content: Text(message),
+      ),
+    );
   }
 }
 
