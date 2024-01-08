@@ -71,8 +71,9 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
   @override
   void initState() {
     super.initState();
-    // checkExistingTokens();
-    checkTokensAndNavigate();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      checkTokensAndNavigate();
+    });
   }
 
   Future<void> checkTokensAndNavigate() async {
@@ -126,14 +127,13 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
               decoration: const BoxDecoration(
                 image: DecorationImage(
                   fit: BoxFit.cover,
-                  image:
-                      AssetImage('assets/marcus-loke-WQJvWU_HZFo-unsplash.jpg'),
+                  image: AssetImage('assets/homepageimg.jpg'),
                 ),
               ),
               child: Center(
                 child: Container(
-                  width: 290,
-                  height: 460,
+                  width: 300,
+                  height: 415,
                   decoration: BoxDecoration(
                     color: const Color(0x99000000),
                     borderRadius: BorderRadius.circular(15.0),
@@ -143,21 +143,18 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
                     child: Column(
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        const Padding(
-                          padding: EdgeInsets.only(bottom: 20.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                "Bookmie",
-                                style: TextStyle(
-                                  fontSize: 38,
-                                  fontWeight: FontWeight.w700,
-                                  color: Color(0xFFF59B15),
-                                ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Bookmie.com",
+                              style: TextStyle(
+                                fontSize: 29,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFFF59B15),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top: 20.0),
@@ -277,48 +274,6 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
           },
         ),
       ),
-    );
-  }
-}
-
-class SplashAndAuthenticate extends StatefulWidget {
-  const SplashAndAuthenticate({Key? key}) : super(key: key);
-
-  @override
-  _SplashAndAuthenticateState createState() => _SplashAndAuthenticateState();
-}
-
-class _SplashAndAuthenticateState extends State<SplashAndAuthenticate> {
-  @override
-  void initState() {
-    super.initState();
-    // Simulate a delay before navigating to AuthenticateSolo1Widget
-    Future.delayed(const Duration(seconds: 4), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (context) => const AuthenticateSolo1Widget()),
-      );
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height,
-      decoration: const BoxDecoration(
-        image: DecorationImage(
-          fit: BoxFit.cover,
-          image: AssetImage('assets/splash_screen.jpeg'),
-        ),
-      ),
-      // child: Scaffold(
-      //   body: Center(
-      //     child: Image.asset(
-      //         'assets/splash_screen.jpeg'), // Replace with your splash image
-      //   ),
-      // ),
     );
   }
 }
