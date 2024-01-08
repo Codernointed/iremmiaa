@@ -25,6 +25,7 @@ class _RoomPricesPageState extends State<RoomPricesPage> {
   final apiUrl = Uri.parse(
       'https://ethenatx.pythonanywhere.com/management/update-room-price/');
   List<EditedEntry> editedEntries = [];
+  bool isApplyingChanges = false;
 
   @override
   void initState() {
@@ -46,7 +47,7 @@ class _RoomPricesPageState extends State<RoomPricesPage> {
             .toSet()
             .toList();
         availableCapacities.insert(0, '...');
-        // Sort the list in ascending order.
+
         availableCapacities.sort();
 
         if (availableCapacities.isNotEmpty) {
@@ -64,67 +65,78 @@ class _RoomPricesPageState extends State<RoomPricesPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFFF59B15)),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-        title: const Text(
-          'Edit Room Prices',
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            color: Color(0xFFF59B15),
-            fontSize: 21,
-          ),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(0, 0, 30, 0),
-            child: IconButton(
-              icon: const Icon(Icons.account_circle,
-                  color: Color(0xFFF59B15), size: 35),
+    return Stack(
+      children: [
+        Scaffold(
+          appBar: AppBar(
+            elevation: 0,
+            backgroundColor: Theme.of(context).colorScheme.background,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back, color: Color(0xFFF59B15)),
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ProfilePage(
-                      accessToken: widget.accessToken,
-                    ),
-                  ),
-                );
+                Navigator.of(context).pop();
               },
             ),
+            title: const Text(
+              'Edit Room Prices',
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                color: Color(0xFFF59B15),
+                fontSize: 21,
+              ),
+            ),
+            actions: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 0, 30, 0),
+                child: IconButton(
+                  icon: const Icon(Icons.account_circle,
+                      color: Color(0xFFF59B15), size: 35),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ProfilePage(
+                          accessToken: widget.accessToken,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: <Widget>[
-            buildSectionTitle('Select room capacity to edit', 18),
-            const SizedBox(height: 15.0),
-            buildDropdown(),
-            const SizedBox(height: 30.0),
-            buildSectionTitle('Enter the new room price', 18),
-            const SizedBox(height: 10.0),
-            buildPriceInput(),
-            const SizedBox(height: 20.0),
-            buildApplyButton(),
-            const SizedBox(height: 20.0),
-            buildSectionTitle('History edited rooms:', 19),
-            const SizedBox(height: 11.0),
-            buildSectionTitle('disappears when you exit the page', 14),
-            const SizedBox(height: 20.0),
-            buildEditedEntriesList(),
-            buildDeleteAllChangesButton(),
-          ],
+          body: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: <Widget>[
+                buildSectionTitle('Select room capacity to edit', 18),
+                const SizedBox(height: 15.0),
+                buildDropdown(),
+                const SizedBox(height: 30.0),
+                buildSectionTitle('Enter the new room price', 18),
+                const SizedBox(height: 10.0),
+                buildPriceInput(),
+                const SizedBox(height: 20.0),
+                buildApplyButton(),
+                const SizedBox(height: 20.0),
+                buildSectionTitle('History edited rooms:', 19),
+                const SizedBox(height: 11.0),
+                buildSectionTitle('disappears when you exit the page', 14),
+                const SizedBox(height: 20.0),
+                buildEditedEntriesList(),
+                buildDeleteAllChangesButton(),
+              ],
+            ),
+          ),
         ),
-      ),
+        if (isApplyingChanges)
+          Container(
+            color: Colors.black.withOpacity(0.5),
+            child: const Center(
+              child: CircularProgressIndicator(),
+            ),
+          ),
+      ],
     );
   }
 
@@ -166,7 +178,7 @@ class _RoomPricesPageState extends State<RoomPricesPage> {
         Expanded(
           child: TextField(
             controller: _textEditingController,
-            keyboardType: TextInputType.numberWithOptions(decimal: true),
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
             onChanged: (value) {
               setState(() {
                 newPrice = double.tryParse(value) ?? 0.0;
@@ -188,6 +200,10 @@ class _RoomPricesPageState extends State<RoomPricesPage> {
         onPressed: isPriceEntered
             ? () async {
                 if (selectedCapacity != '...') {
+                  setState(() {
+                    isApplyingChanges = true;
+                  });
+
                   if (await updateRoomPrices()) {
                     setState(() {
                       editedEntries.add(EditedEntry(
@@ -199,12 +215,16 @@ class _RoomPricesPageState extends State<RoomPricesPage> {
                       selectedCapacity = '...'; // Reset selectedCapacity
                     });
                   }
+
+                  setState(() {
+                    isApplyingChanges = false;
+                  });
                 } else {
                   showSnackBar('Select Room Capacity');
                 }
               }
-            : null, // Disable button when room price is not entered
-        child: Row(
+            : null, //To Disable the button when room price is not entered
+        child: const Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text('Apply Changes', style: TextStyle(fontSize: 16)),
@@ -310,7 +330,7 @@ class _RoomPricesPageState extends State<RoomPricesPage> {
   void showSnackBar(String message, {Color? backgroundColor}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        backgroundColor: backgroundColor ?? Colors.grey, // Default to gray
+        backgroundColor: backgroundColor ?? Colors.grey,
         content: Text(message),
       ),
     );

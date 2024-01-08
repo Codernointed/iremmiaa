@@ -59,10 +59,10 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      // backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.background,
         automaticallyImplyLeading: false,
         centerTitle: true,
         leading: null,
@@ -107,23 +107,6 @@ class HomePage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => RoomPricesPage(
-                      accessToken: accessToken,
-                    ),
-                  ),
-                );
-              },
-              child: _buildCard(
-                'Update Room Prices',
-                'assets/price.jpg',
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
-                // Navigate to RoomDetailsPage
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
                     builder: (context) => RoomDetailsPage(
                       accessToken: accessToken,
                     ),
@@ -131,13 +114,28 @@ class HomePage extends StatelessWidget {
                 );
               },
               child: _buildCard(
-                'Update Rooms Details',
+                'Rooms',
                 'assets/details.jpg',
               ),
             ),
             GestureDetector(
               onTap: () {
-                // Navigate to RoomDetailsPage
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => RoomPricesPage(
+                      accessToken: accessToken,
+                    ),
+                  ),
+                );
+              },
+              child: _buildCard(
+                'Update Prices',
+                'assets/price.jpg',
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(

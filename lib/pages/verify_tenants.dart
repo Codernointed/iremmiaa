@@ -36,7 +36,7 @@ class _VerifyTenantsPageState extends State<VerifyTenantsPage> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.background,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Color(0xFFF59B15)),
           onPressed: () {
@@ -172,11 +172,6 @@ class _VerifyTenantsPageState extends State<VerifyTenantsPage> {
   }
 
   Future<void> verifyTenant(String? qrCode) async {
-    if (qrCode == null) {
-      // Handle the case where the QR code is null (e.g., user canceled the scan).
-      return;
-    }
-
     final apiUrl = Uri.parse(
         'https://ethenatx.pythonanywhere.com/management/verify-tenant/');
     final response = await http.post(
@@ -217,7 +212,7 @@ class _VerifyTenantsPageState extends State<VerifyTenantsPage> {
                 ],
               ),
             ),
-            contentPadding: EdgeInsets.all(16), // Adjust content padding
+            contentPadding: EdgeInsets.all(16),
             actions: [
               TextButton(
                 onPressed: () {
@@ -230,68 +225,22 @@ class _VerifyTenantsPageState extends State<VerifyTenantsPage> {
               ),
             ],
           );
-          // return Container(
-          //   height: 20,
-          //   child: AlertDialog(
-          //     title: const Text('Verification Successful'),
-          //     content: Column(
-          //       children: [
-          //         Image.asset(
-          //           'assets/Success.gif',
-          //           width: 90,
-          //           height: 90,
-          //         ),
-          //         Column(
-          //           crossAxisAlignment: CrossAxisAlignment.start,
-          //           children: [
-          //             Text('Hostel: ${data['hostel_name']}'),
-          //             Text('Room Number: ${data['room_number']}'),
-          //             Text('Name: ${data['tenant_name']}'),
-          //             Text('ID: ${data['student_id']}'),
-          //             Text('Status: ${data['checked_in_status']}'),
-          //           ],
-          //         ),
-          //       ],
-          //     ),
-          //     contentPadding: EdgeInsets.all(16), // Adjust content padding
-          //     actions: [
-          //       TextButton(
-          //         onPressed: () {
-          //           setState(() {
-          //             isVerificationDialogShown = false;
-          //           });
-          //           Navigator.of(context).pop();
-          //         },
-          //         child: const Text('Close'),
-          //       ),
-          //     ],
-          //   ),
-          // );
         },
       );
     } else {
-      // showDialog(
-      //   context: context,
-      //   builder: (context) {
-      //     return AlertDialog(
-      //       title: Text('Error'),
-      //       content: Text('Tenant V-code not valid.'),
-      //       actions: [
-      //         TextButton(
-      //           onPressed: () {
-      //             Navigator.of(context).pop();
-      //           },
-      //           child: Text('Close'),
-      //         ),
-      //       ],
-      //     );
-      //   },
-      // );
+      final data = json.decode(response.body);
+      String errorMessage = 'Error';
+      if (response.statusCode == 401) {
+        errorMessage = 'Tenant V-code has expired';
+      } else if (response.statusCode == 404) {
+        errorMessage = 'Tenant V-code not valid';
+      }
+
       showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: const Text('Error'),
+            title: Text(errorMessage),
             content: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -301,7 +250,7 @@ class _VerifyTenantsPageState extends State<VerifyTenantsPage> {
                     width: 60,
                     height: 60,
                   ),
-                  const Text('Tenant V-code not valid.'),
+                  Text(data['message']),
                 ],
               ),
             ),

@@ -86,7 +86,7 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.background,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Color(0xFFF59B15)),
           onPressed: () {
@@ -230,6 +230,18 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
         TextEditingController(text: room.roomBedSpace.toString());
     bool isOccupied = room.occupied;
 
+    bool isSaving = false; // Added variable to track saving state
+
+    // Function to show snackbar with the specified message and color
+    void showSnackbar(String message, Color color) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: color,
+        ),
+      );
+    }
+
     showDialog(
       context: context,
       builder: (context) {
@@ -273,6 +285,14 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
                         });
                       },
                     ),
+                    // Progress Indicator
+                    if (isSaving)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      ),
                   ],
                 ),
               ),
@@ -284,24 +304,46 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
                   child: const Text('Cancel'),
                 ),
                 TextButton(
-                  onPressed: () async {
-                    final updatedRoom = room.copyWith(
-                      roomNo: roomNoController.text,
-                      roomCapacity:
-                          int.tryParse(roomCapacityController.text) ?? 0,
-                      roomPrice: double.parse(roomPriceController.text),
-                      roomBedSpace:
-                          int.tryParse(roomBedSpaceController.text) ?? 0,
-                      occupied: isOccupied,
-                    );
+                  onPressed: isSaving
+                      ? null
+                      : () async {
+                          setState(() {
+                            isSaving = true;
+                          });
 
-                    // Update the room details via an API request.
-                    await _updateRoom(updatedRoom, widget.accessToken);
-                    // Update the room details in the cards through the callback.
-                    updateRoom(updatedRoom);
+                          final updatedRoom = room.copyWith(
+                            roomNo: roomNoController.text,
+                            roomCapacity:
+                                int.tryParse(roomCapacityController.text) ?? 0,
+                            roomPrice: double.parse(roomPriceController.text),
+                            roomBedSpace:
+                                int.tryParse(roomBedSpaceController.text) ?? 0,
+                            occupied: isOccupied,
+                          );
 
-                    Navigator.of(context).pop();
-                  },
+                          try {
+                            // Show Progress Indicator
+                            // Update the room details via an API request.
+                            await _updateRoom(updatedRoom, widget.accessToken);
+                            // Update the room details in the cards through the callback.
+                            updateRoom(updatedRoom);
+                            Navigator.of(context).pop();
+
+                            // Show success snackbar
+                            showSnackbar('Room details saved successfully',
+                                Colors.green);
+                          } catch (e) {
+                            // Handle error
+                            // You may want to show an error message here
+                            // Show error snackbar
+                            showSnackbar(
+                                'Failed to save room details', Colors.red);
+                          } finally {
+                            setState(() {
+                              isSaving = false;
+                            });
+                          }
+                        },
                   child: const Text('Save'),
                 ),
               ],
@@ -422,23 +464,20 @@ class RoomCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12.0),
       ),
       margin: const EdgeInsets.all(8.0),
-      color: Colors.white70,
+      color: Theme.of(context).colorScheme.secondaryContainer,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: IntrinsicHeight(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 'Room No: ${room.roomNo}',
                 style: const TextStyle(
-                  fontSize: 20,
-                  color: Color(0xff1f170b),
+                  fontSize: 21,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 0.0),
               Text(
                 'Capacity: ${room.roomCapacity}',
                 style: const TextStyle(
@@ -469,7 +508,7 @@ class RoomCard extends StatelessWidget {
                   fontSize: 18, // Adjust the font size as needed
                 ),
               ),
-              const SizedBox(height: 7),
+              const SizedBox(height: 3),
               ElevatedButton(
                 onPressed: () => onEdit(room),
                 child: const Text('Edit'),

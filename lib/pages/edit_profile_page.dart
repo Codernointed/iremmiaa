@@ -22,6 +22,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   TextEditingController endPriceController = TextEditingController();
   TextEditingController mainWebsiteController = TextEditingController();
   TextEditingController locationController = TextEditingController();
+  bool isUpdating = false;
 
   @override
   void initState() {
@@ -70,6 +71,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   Future<void> updateProfile() async {
+    setState(() {
+      isUpdating = true;
+    });
+
     String priceRange =
         '${startPriceController.text}-${endPriceController.text}';
     final url =
@@ -101,6 +106,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
     } catch (e) {
       print('Error updating profile: $e');
       _showErrorSnackbar(e.toString());
+    } finally {
+      setState(() {
+        isUpdating = false;
+      });
     }
   }
 
@@ -139,7 +148,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.background,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Color(0xFFF59B15)),
           onPressed: () {
@@ -155,48 +164,61 @@ class _EditProfilePageState extends State<EditProfilePage> {
           ),
         ),
       ),
-      body: Container(
-        height: double.infinity,
-        child: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildTextField('Hostel Name', hostelNameController),
-                    _buildTextField(
-                        'Manager Contact', managerContactController),
-                    _buildTextField('Hostel Contact', hostelContactController),
-                    _buildTextField('Mobile Money', mobileMoneyController),
-                    _buildPriceRangeFields(),
-                    _buildTextField('Main Website', mainWebsiteController),
-                    _buildTextField('Location', locationController),
-                  ],
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SizedBox(
-                width: double.infinity,
-                height: 35,
-                child: ElevatedButton(
-                  onPressed: updateProfile,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text('Update Profile', style: TextStyle(fontSize: 16)),
-                      SizedBox(width: 8),
-                      FaIcon(FontAwesomeIcons.solidFloppyDisk, size: 18),
-                    ],
+      body: Stack(
+        children: [
+          Container(
+            height: double.infinity,
+            child: Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        _buildTextField('Hostel Name', hostelNameController),
+                        _buildTextField(
+                            'Manager Contact', managerContactController),
+                        _buildTextField(
+                            'Hostel Contact', hostelContactController),
+                        _buildTextField('Mobile Money', mobileMoneyController),
+                        _buildPriceRangeFields(),
+                        _buildTextField('Main Website', mainWebsiteController),
+                        _buildTextField('Location', locationController),
+                      ],
+                    ),
                   ),
                 ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 35,
+                    child: ElevatedButton(
+                      onPressed: updateProfile,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text('Update Profile',
+                              style: TextStyle(fontSize: 16)),
+                          SizedBox(width: 8),
+                          FaIcon(FontAwesomeIcons.solidFloppyDisk, size: 18),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (isUpdating)
+            Container(
+              color: Colors.black.withOpacity(0.5),
+              child: const Center(
+                child: CircularProgressIndicator(),
               ),
             ),
-          ],
-        ),
+        ],
       ),
     );
   }

@@ -60,7 +60,7 @@ class _ViewTenantsPageState extends State<ViewTenantsPage> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.background,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Color(0xFFF59B15)),
           onPressed: () {
@@ -104,7 +104,7 @@ class _ViewTenantsPageState extends State<ViewTenantsPage> {
                 return Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Card(
-                    color: Colors.white70,
+                    color: Theme.of(context).colorScheme.secondaryContainer,
                     // elevation: 2,
                     margin: EdgeInsets.symmetric(vertical: 8),
                     child: Padding(
