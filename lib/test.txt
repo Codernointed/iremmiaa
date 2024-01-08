@@ -1,10 +1,17 @@
+TODO
+allow the hostel name to reduce size when the name is much
+centre the HomePage
+let the swtch toggle
+
+
 enabledBorder: const UnderlineInputBorder(
                                 borderSide: BorderSide(
                                   color: Color(0xFFF59B15),
                                 ),
                               ),
-
-
+PROFILE BUTTON
+_buildButton(
+                    'Report an issue or bug', Icons.bug_report_rounded),
 AlertDialog(
               title: const Text('Verification Successful'),
               content: Column(
@@ -1752,3 +1759,285 @@ splash
 //     );
 //   }
 // }
+
+
+
+statusCode
+if (statisticsData.isNotEmpty)
+              _buildBarChart(
+                  'Number of Rooms', statisticsData['number_of_rooms']),
+            if (statisticsData.isNotEmpty)
+              _buildBarChart(
+                  'Number of Tenants', statisticsData['number_of_tenants']),
+            if (statisticsData.isNotEmpty)
+              _buildBarChart('Total Sales', statisticsData['total_sales']),
+            if (statisticsData.isNotEmpty)
+              _buildBarChart('Number of Rooms Occupied',
+                  statisticsData['number_rooms_occupied']),
+            if (statisticsData.isNotEmpty)
+
+              Widget _buildBarChart(String title, double? value) {
+    // Check if value is null, and if so, set it to 0
+    value ??= 0;
+
+    return Padding(
+      padding: EdgeInsets.only(bottom: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 10),
+          Container(
+            height: 300,
+            child: BarChart(
+              BarChartData(
+                alignment: BarChartAlignment.spaceAround,
+                maxY: value * 1.2,
+                barTouchData: BarTouchData(
+                  touchTooltipData: BarTouchTooltipData(
+                    tooltipBgColor: Colors.blueGrey,
+                    getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                      // Check if rod is not null and rod.toY is not null
+                      if (rod != null && rod.toY != null) {
+                        return BarTooltipItem(
+                          rod.toY.toString(),
+                          TextStyle(color: Colors.yellow),
+                        );
+                      } else {
+                        return BarTooltipItem(
+                          "N/A",
+                          TextStyle(color: Colors.yellow),
+                        );
+                      }
+                    },
+                  ),
+                ),
+                titlesData: FlTitlesData(
+                  leftTitles: AxisTitles(),
+                  bottomTitles: AxisTitles(),
+                ),
+                borderData: FlBorderData(
+                  show: false,
+                ),
+                barGroups: [
+                  BarChartGroupData(
+                    x: 0,
+                    barRods: [
+                      BarChartRodData(
+                        toY: value,
+                        color: Colors.blue,
+                      ),
+                    ],
+                    showingTooltipIndicators: [0],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:fl_chart/fl_chart.dart';
+
+class StatisticsPage extends StatefulWidget {
+  final String accessToken;
+
+  const StatisticsPage({Key? key, required this.accessToken}) : super(key: key);
+
+  @override
+  _StatisticsPageState createState() => _StatisticsPageState();
+}
+
+class _StatisticsPageState extends State<StatisticsPage> {
+  Map<String, dynamic> statisticsData = {};
+
+  @override
+  void initState() {
+    super.initState();
+    fetchStatistics();
+  }
+
+  Future<void> fetchStatistics() async {
+    final url =
+        'https://ethenatx.pythonanywhere.com/management/management-profile/';
+
+    try {
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {'Authorization': 'Bearer ${widget.accessToken}'},
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        setState(() {
+          statisticsData = data;
+        });
+      } else {
+        throw Exception('Failed to load statistics data');
+      }
+    } catch (e) {
+      print('Error fetching statistics data: $e');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Statistics'),
+      ),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _buildBarChart(),
+            SizedBox(height: 16),
+            _buildPieChart('Bed Space Distribution', {
+              '4 in a Room': statisticsData['number_of_4_in_a_room'],
+              '3 in a Room': statisticsData['number_of_3_in_a_room'],
+              '2 in a Room': statisticsData['number_of_2_in_a_room'],
+              '1 in a Room': statisticsData['number_of_1_in_a_room'],
+            }),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBarChart() {
+    double tenantCount = statisticsData['number_of_tenants']?.toDouble() ?? 0;
+    double roomsOccupied =
+        statisticsData['number_rooms_occupied']?.toDouble() ?? 0;
+    double bedSpaceLeft =
+        statisticsData['total_bed_space_left']?.toDouble() ?? 0;
+
+    return Container(
+      height: 300,
+      child: BarChart(
+        BarChartData(
+          alignment: BarChartAlignment.spaceAround,
+          titlesData: FlTitlesData(
+            show: true,
+            bottomTitles: SideTitles(
+              rotateAngle: 45,
+              showTitles: true,
+              getTitles: (value) {
+                switch (value.toInt()) {
+                  case 0:
+                    return 'Number of Tenants';
+                  case 1:
+                    return 'Number of Rooms Occupied';
+                  case 2:
+                    return 'Total Bed Space Left';
+                  default:
+                    return '';
+                }
+              },
+            ),
+            leftTitles: SideTitles(
+              showTitles: true,
+              interval: 10,
+            ),
+          ),
+          borderData: FlBorderData(
+            show: false,
+          ),
+          barGroups: [
+            BarChartGroupData(
+              x: 0,
+              barRods: [
+                BarChartRodData(y: tenantCount, colors: [Colors.blue]),
+              ],
+            ),
+            BarChartGroupData(
+              x: 1,
+              barRods: [
+                BarChartRodData(y: roomsOccupied, colors: [Colors.green]),
+              ],
+            ),
+            BarChartGroupData(
+              x: 2,
+              barRods: [
+                BarChartRodData(y: bedSpaceLeft, colors: [Colors.orange]),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPieChart(String title, Map<String, dynamic> data) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 10),
+          Container(
+            height: 300,
+            child: PieChart(
+              PieChartData(
+                pieTouchData: PieTouchData(
+                  touchCallback: (FlTouchEvent event, pieTouchResponse) {
+                    // Handle touch events if needed
+                  },
+                ),
+                borderData: FlBorderData(
+                  show: false,
+                ),
+                sectionsSpace: 0,
+                centerSpaceRadius: 30,
+                sections: _getModifiedPieChartSections(data),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  List<PieChartSectionData> _getModifiedPieChartSections(
+      Map<String, dynamic> data) {
+    List<PieChartSectionData> sections = [];
+    final List<Color> colors = [
+      Colors.blue,
+      Colors.yellow,
+      Colors.purple,
+      Colors.green,
+    ];
+
+    int i = 0;
+    data.forEach((key, value) {
+      sections.add(
+        PieChartSectionData(
+          color: colors[i],
+          value: value.toDouble(),
+          title: '${value.toString()}',
+          radius: 40,
+          titleStyle: TextStyle(
+            fontSize: 16.0,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
+      );
+      i++;
+    });
+
+    return sections;
+  }
+}
