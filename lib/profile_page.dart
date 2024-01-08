@@ -1,13 +1,18 @@
+//profile page.dart
 import 'dart:convert';
+import 'package:bookmie/pages/income_stats.dart';
+import 'package:bookmie/pages/statistics_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:cached_network_image/cached_network_image.dart'; // Import the package
+import 'package:provider/provider.dart';
 import '/pages/edit_profile_page.dart';
+import '../Custom_classes/theme_provider.dart';
 
 class ProfilePage extends StatefulWidget {
   final String accessToken;
 
-  const ProfilePage({Key? key, required this.accessToken}) : super(key: key);
+  ProfilePage({Key? key, required this.accessToken}) : super(key: key);
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
@@ -21,6 +26,7 @@ class _ProfilePageState extends State<ProfilePage> {
   int numberOfRooms = 0;
   int numberOfTenants = 0;
   int numberOfRoomsOccupied = 0;
+  int numberOfSpaceLeft = 0;
 
   @override
   void initState() {
@@ -47,6 +53,7 @@ class _ProfilePageState extends State<ProfilePage> {
           numberOfRooms = data['number_of_rooms'] ?? 0;
           numberOfTenants = data['number_of_tenants'] ?? 0;
           numberOfRoomsOccupied = data['number_rooms_occupied'] ?? 0;
+          numberOfSpaceLeft = data['total_bed_space_left'] ?? 0;
           final baseUrl = 'https://ethenatx.pythonanywhere.com';
           managerProfilePicture =
               '$baseUrl${data['hostel_manager_profile_picture']}';
@@ -63,33 +70,60 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            _buildHeader(),
-            _buildStats(),
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => EditProfilePage(
-                      accessToken: widget.accessToken,
-                    ),
-                  ),
-                );
-              },
-              child: _buildButton('Edit Profile', Icons.edit),
+    return MaterialApp(
+        theme: Provider.of<ThemeProvider>(context).themeData,
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: Column(
+              children: [
+                _buildHeader(),
+                _buildStats(),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EditProfilePage(
+                          accessToken: widget.accessToken,
+                        ),
+                      ),
+                    );
+                  },
+                  child: _buildButton('Edit Profile', Icons.edit),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => StatisticsPage(
+                          accessToken: widget.accessToken,
+                        ),
+                      ),
+                    );
+                  },
+                  child: _buildButton(
+                      'Statistics', Icons.insert_chart_outlined_outlined),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SalesStatsPage(
+                          accessToken: widget.accessToken,
+                        ),
+                      ),
+                    );
+                  },
+                  child:
+                      _buildButton('Icome Stats', Icons.attach_money_rounded),
+                ),
+                _buildButton('Logout', Icons.logout, color: Color(0xFFF59B15)),
+              ],
             ),
-            _buildButton('Scanned History', Icons.qr_code_scanner_rounded),
-            _buildButton('Statistics', Icons.insert_chart_outlined_outlined),
-            _buildButton('Report an issue or bug', Icons.bug_report_rounded),
-            _buildButton('Logout', Icons.logout, color: Color(0xFFF59B15)),
-          ],
-        ),
-      ),
-    );
+          ),
+        ));
   }
 
   Widget _buildHeader() {
@@ -98,16 +132,14 @@ class _ProfilePageState extends State<ProfilePage> {
       child: Stack(
         children: [
           _buildBackgroundImage(),
-          _buildSwitch(),
           _buildProfileImage(),
           _buildUserInfo(),
+          _buildDarkModeToggle(),
           _buildBackButton(),
         ],
       ),
     );
   }
-
-  // ...
 
   Widget _buildBackgroundImage() {
     return Align(
@@ -117,7 +149,10 @@ class _ProfilePageState extends State<ProfilePage> {
         height: 235,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xff000000), Color(0xffffffff)],
+            colors: [
+              Theme.of(context).colorScheme.primaryContainer,
+              Theme.of(context).colorScheme.background
+            ],
             stops: [0, 1],
             begin: AlignmentDirectional(0, -1),
             end: AlignmentDirectional(0, 1),
@@ -131,7 +166,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 width: double.infinity,
                 height: double.infinity,
                 decoration: BoxDecoration(
-                  color: Colors.black,
+                  color: Theme.of(context).colorScheme.background,
                   image: DecorationImage(
                     fit: BoxFit.cover,
                     image: CachedNetworkImageProvider(hostelImage),
@@ -166,16 +201,133 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildSwitch() {
+  Widget _buildDarkModeToggle() {
     return Align(
-      alignment: const AlignmentDirectional(0.95, 1.09),
-      child: Switch.adaptive(
-        value: true,
-        onChanged: (newValue) {},
-        activeColor: const Color(0xFF959798),
-        activeTrackColor: const Color(0xFF959798),
-        inactiveTrackColor: Colors.white,
-        inactiveThumbColor: Colors.black,
+      alignment:
+          const AlignmentDirectional(0.1, -0.5), // Move to the right side
+      child: Row(
+        children: [
+          Padding(
+            padding: EdgeInsetsDirectional.fromSTEB(12, 0, 12, 0),
+            child: Icon(
+              Icons.brightness_4,
+              color: Colors.grey,
+            ),
+          ),
+          Padding(
+            padding: EdgeInsetsDirectional.fromSTEB(0, 0, 12, 0),
+            child: Switch(
+              value: true,
+              onChanged: (bool value) {
+                Provider.of<ThemeProvider>(context, listen: false)
+                    .toggleTheme();
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatsItem(IconData icon, String value, String label) {
+    return Padding(
+      padding: const EdgeInsetsDirectional.fromSTEB(16, 12, 12, 12),
+      child: Container(
+        width: 140,
+        height: 100,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.secondaryContainer,
+          // boxShadow: const [
+          //   BoxShadow(
+          //     blurRadius: 4,
+          //     // color: Color(0x34090F13),
+          //     offset: Offset(0, 2),
+          //   )
+          // ],
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 0, 0),
+              child: Icon(
+                icon,
+                color: const Color(
+                    0xFFF59B15), // Adjust icon color based on the theme
+                size: 30,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(12, 12, 12, 12),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    value,
+                    style: TextStyle(
+                      fontFamily: 'Plus Jakarta Sans',
+                      fontSize: 30,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontFamily: 'Plus Jakarta Sans',
+                      fontSize: 15,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildButton(String text, IconData icon, {Color? color}) {
+    return Align(
+      alignment: const AlignmentDirectional(0.00, 0.00),
+      child: Padding(
+        padding: const EdgeInsetsDirectional.fromSTEB(16, 10, 16, 10),
+        child: Container(
+          width: double.infinity,
+          height: 60,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.secondaryContainer,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          alignment: const AlignmentDirectional(0.00, 0.00),
+          child: Row(
+            children: [
+              Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(12, 0, 12, 0),
+                child: Icon(
+                  icon,
+                  // color: Theme.of(context).colorScheme.secondary,
+                ),
+              ),
+              Expanded(
+                child: Text(
+                  text,
+                  style: TextStyle(
+                    fontFamily: 'Outfit',
+                    fontSize: 15,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(0, 0, 12, 0),
+                child: Icon(
+                  Icons.chevron_right_rounded,
+                  size: 24,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -201,9 +353,8 @@ class _ProfilePageState extends State<ProfilePage> {
           child: Text(
             title,
             textAlign: TextAlign.start,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'Outfit',
-              color: Colors.black,
               fontSize: 35,
               fontWeight: FontWeight.bold,
             ),
@@ -230,11 +381,8 @@ class _ProfilePageState extends State<ProfilePage> {
         onPressed: () {
           Navigator.of(context).pop();
         },
-        icon: const Icon(
-          Icons.arrow_back,
-          size: 24,
-          color: Colors.white,
-        ),
+        icon: Icon(Icons.arrow_back,
+            size: 24, color: Theme.of(context).colorScheme.secondary),
       ),
     );
   }
@@ -243,9 +391,6 @@ class _ProfilePageState extends State<ProfilePage> {
     return Container(
       width: double.infinity,
       height: 106,
-      decoration: const BoxDecoration(
-        color: Colors.white,
-      ),
       child: ListView(
         padding: EdgeInsets.zero,
         primary: false,
@@ -257,116 +402,9 @@ class _ProfilePageState extends State<ProfilePage> {
               numberOfTenants.toString(), 'Tenants'),
           _buildStatsItem(Icons.door_back_door,
               numberOfRoomsOccupied.toString(), 'Occupied'),
+          _buildStatsItem(Icons.grid_view_rounded, numberOfSpaceLeft.toString(),
+              'Space Left'),
         ],
-      ),
-    );
-  }
-
-  Widget _buildStatsItem(IconData icon, String value, String label) {
-    return Padding(
-      padding: const EdgeInsetsDirectional.fromSTEB(16, 12, 12, 12),
-      child: Container(
-        width: 130,
-        height: 100,
-        decoration: BoxDecoration(
-          color: Colors.grey[200],
-          boxShadow: const [
-            BoxShadow(
-              blurRadius: 4,
-              color: Color(0x34090F13),
-              offset: Offset(0, 2),
-            )
-          ],
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Row(
-          children: [
-            Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 0, 0),
-              child: Icon(
-                icon,
-                color: const Color(0xFFF59B15),
-                size: 30,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(12, 12, 12, 12),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    value,
-                    style: const TextStyle(
-                      fontFamily: 'Plus Jakarta Sans',
-                      color: Colors.black,
-                      fontSize: 30,
-                      fontWeight: FontWeight.normal,
-                    ),
-                  ),
-                  Text(
-                    label,
-                    style: const TextStyle(
-                      fontFamily: 'Plus Jakarta Sans',
-                      color: Colors.grey,
-                      fontSize: 15,
-                      fontWeight: FontWeight.normal,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildButton(String text, IconData icon, {Color? color}) {
-    return Align(
-      alignment: const AlignmentDirectional(0.00, 0.00),
-      child: Padding(
-        padding: const EdgeInsetsDirectional.fromSTEB(16, 10, 16, 10),
-        child: Container(
-          width: double.infinity,
-          height: 60,
-          decoration: BoxDecoration(
-            color: color ?? Colors.grey[200],
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(
-              color: Colors.white,
-              width: 2,
-            ),
-          ),
-          alignment: const AlignmentDirectional(0.00, 0.00),
-          child: Row(
-            children: [
-              Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(12, 0, 12, 0),
-                child: Icon(
-                  icon,
-                  color: Colors.grey,
-                ),
-              ),
-              Expanded(
-                child: Text(
-                  text,
-                  style: const TextStyle(
-                    fontFamily: 'Outfit',
-                    fontSize: 15,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(0, 0, 12, 0),
-                child: Icon(
-                  Icons.chevron_right_rounded,
-                  size: 24,
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
