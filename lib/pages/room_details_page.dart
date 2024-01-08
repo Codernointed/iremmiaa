@@ -260,19 +260,22 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
                     ),
                     TextFormField(
                       controller: roomCapacityController,
-                      keyboardType: TextInputType.number,
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
                       decoration:
                           const InputDecoration(labelText: 'Room Capacity'),
                     ),
                     TextFormField(
                       controller: roomPriceController,
-                      keyboardType: TextInputType.number,
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
                       decoration:
                           const InputDecoration(labelText: 'Room Price'),
                     ),
                     TextFormField(
                       controller: roomBedSpaceController,
-                      keyboardType: TextInputType.number,
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
                       decoration:
                           const InputDecoration(labelText: 'Space Left'),
                     ),
