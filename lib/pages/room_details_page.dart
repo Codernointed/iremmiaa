@@ -32,6 +32,67 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
     fetchRooms();
   }
 
+  Future<void> showFilterDialog(
+    String title,
+    String hintText,
+    void Function(String) onFilter,
+  ) async {
+    String filterValue = '';
+
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                onChanged: (value) {
+                  filterValue = value;
+                },
+                decoration: InputDecoration(
+                  hintText: hintText,
+                ),
+              ),
+              SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  onFilter(filterValue);
+                  Navigator.pop(context);
+                },
+                child: Text('Apply Filter'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void searchTenants(String query) {
+    setState(() {
+      filteredRooms = rooms.where((room) {
+        final matchesSearch =
+            room.roomNo.toLowerCase().contains(query.toLowerCase());
+        final matchesTenants = room.noOfTenants.toString().contains(query);
+        final matchesGender =
+            room.gender.toLowerCase().contains(query.toLowerCase());
+
+        return matchesSearch || matchesTenants || matchesGender;
+      }).toList();
+    });
+  }
+
+  void searchGender(String query) {
+    setState(() {
+      filteredRooms = rooms
+          .where(
+              (room) => room.gender.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    });
+  }
+
   void filterRooms() {
     setState(() {
       filteredRooms = rooms.where((room) {
@@ -61,7 +122,10 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
       final List<dynamic> roomData = json.decode(response.body);
 
       rooms = roomData.map((roomJson) => Room.fromJson(roomJson)).toList();
-      // print("filter: $rooms");
+      print("filter: $rooms");
+      print(rooms);
+      print(roomData);
+
       filteredRooms = List.from(rooms);
       setState(() {
         isLoading = false;
@@ -141,17 +205,49 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
   Widget _buildSearchBar() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: TextField(
-        onChanged: (value) {
-          setState(() {
-            searchText = value;
-            filterRooms();
-          });
-        },
-        decoration: const InputDecoration(
-          hintText: 'Search by Room No',
-          prefixIcon: Icon(Icons.search),
-        ),
+      child: Column(
+        children: [
+          TextField(
+            onChanged: (value) {
+              setState(() {
+                searchText = value;
+                filterRooms();
+              });
+            },
+            decoration: const InputDecoration(
+              hintText: 'Search by Room No',
+              prefixIcon: Icon(Icons.search),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  showFilterDialog(
+                    'Filter by Tenants',
+                    'Enter number of tenants',
+                    (value) => searchTenants(value),
+                  );
+                },
+                // style: ButtonStyle(
+                //     backgroundColor: Colors.),
+                child: const Text('Filter by Tenants'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  showFilterDialog(
+                    'Filter by Gender',
+                    'Enter gender',
+                    (value) => searchGender(value),
+                  );
+                },
+                child: const Text('Filter by Gender'),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -204,7 +300,7 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
     return GridView.builder(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        childAspectRatio: 0.8,
+        childAspectRatio: 0.7,
       ),
       itemCount: filteredRooms.isEmpty ? rooms.length : filteredRooms.length,
       shrinkWrap: true,
@@ -220,6 +316,9 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
   }
 
   Future<void> _showEditRoomDialog(BuildContext context, Room room) async {
+    Room updatedRoom =
+        room.copyWith(); // Initialize the variable before setState
+
     final TextEditingController roomNoController =
         TextEditingController(text: room.roomNo);
     final TextEditingController roomCapacityController =
@@ -230,9 +329,8 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
         TextEditingController(text: room.roomBedSpace.toString());
     bool isOccupied = room.occupied;
 
-    bool isSaving = false; // Added variable to track saving state
+    bool isSaving = false;
 
-    // Function to show snackbar with the specified message and color
     void showSnackbar(String message, Color color) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -246,7 +344,6 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
       context: context,
       builder: (context) {
         return StatefulBuilder(
-          // Use StatefulBuilder for the dialog content
           builder: (context, setState) {
             return AlertDialog(
               title: const Text('Edit Room Details'),
@@ -279,16 +376,32 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
                       decoration:
                           const InputDecoration(labelText: 'Space Left'),
                     ),
+                    DropdownButtonFormField<String>(
+                      value: updatedRoom.gender,
+                      onChanged: (value) {
+                        setState(() {
+                          updatedRoom = updatedRoom.copyWith(gender: value);
+                        });
+                      },
+                      items: ['male', 'female', 'open']
+                          .map((gender) => DropdownMenuItem<String>(
+                                value: gender,
+                                child: Text(gender),
+                              ))
+                          .toList(),
+                      decoration: const InputDecoration(labelText: 'Gender'),
+                    ),
                     CheckboxListTile(
                       title: const Text('Occupied'),
                       value: isOccupied,
                       onChanged: (value) {
                         setState(() {
                           isOccupied = value ?? false;
+                          updatedRoom =
+                              updatedRoom.copyWith(occupied: isOccupied);
                         });
                       },
                     ),
-                    // Progress Indicator
                     if (isSaving)
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 10),
@@ -325,20 +438,13 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
                           );
 
                           try {
-                            // Show Progress Indicator
-                            // Update the room details via an API request.
                             await _updateRoom(updatedRoom, widget.accessToken);
-                            // Update the room details in the cards through the callback.
                             updateRoom(updatedRoom);
                             Navigator.of(context).pop();
 
-                            // Show success snackbar
                             showSnackbar('Room details saved successfully',
                                 Colors.green);
                           } catch (e) {
-                            // Handle error
-                            // You may want to show an error message here
-                            // Show error snackbar
                             showSnackbar(
                                 'Failed to save room details', Colors.red);
                           } finally {
@@ -372,6 +478,7 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
         'room_price': updatedRoom.roomPrice,
         'bed_space_left': updatedRoom.roomBedSpace,
         'occupied': updatedRoom.occupied,
+        'gender': updatedRoom.gender,
       }),
     );
 
@@ -390,7 +497,10 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
           }
         });
       }
-    } else {}
+    } else {
+      // Handle error
+      // You may want to show an error message here
+    }
   }
 }
 
@@ -402,6 +512,7 @@ class Room {
   final int noOfTenants;
   final bool occupied;
   final String roomId;
+  final String gender;
 
   Room({
     required this.roomNo,
@@ -411,6 +522,7 @@ class Room {
     required this.noOfTenants,
     required this.occupied,
     required this.roomId,
+    required this.gender,
   });
 
   factory Room.fromJson(Map<String, dynamic> json) {
@@ -422,6 +534,7 @@ class Room {
       noOfTenants: json['number_of_tenants'] ?? 0,
       occupied: json['occupied'] ?? false,
       roomId: json['room_id'],
+      gender: json['gender'] ?? '',
     );
   }
 
@@ -432,6 +545,7 @@ class Room {
     int? roomBedSpace,
     int? noOfTenants,
     bool? occupied,
+    String? gender,
   }) {
     return Room(
       roomNo: roomNo ?? this.roomNo,
@@ -441,6 +555,7 @@ class Room {
       noOfTenants: noOfTenants ?? this.noOfTenants,
       occupied: occupied ?? this.occupied,
       roomId: roomId,
+      gender: gender ?? this.gender,
     );
   }
 }
@@ -452,13 +567,12 @@ class RoomCard extends StatelessWidget {
   final Function(Room) updateRoom;
 
   const RoomCard({
-    super.key,
-    // Key? key,
+    Key? key,
     required this.room,
     required this.onEdit,
     required this.accessToken,
     required this.updateRoom,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -484,7 +598,7 @@ class RoomCard extends StatelessWidget {
               Text(
                 'Capacity: ${room.roomCapacity}',
                 style: const TextStyle(
-                  fontSize: 18, // Adjust the font size as needed
+                  fontSize: 18,
                 ),
               ),
               Text(
@@ -506,9 +620,15 @@ class RoomCard extends StatelessWidget {
                 ),
               ),
               Text(
+                'Gender: ${room.gender}',
+                style: const TextStyle(
+                  fontSize: 18,
+                ),
+              ),
+              Text(
                 'Occupied: ${room.occupied ? 'Yes' : 'No'}',
                 style: const TextStyle(
-                  fontSize: 18, // Adjust the font size as needed
+                  fontSize: 18,
                 ),
               ),
               const SizedBox(height: 3),
