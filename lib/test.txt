@@ -3,7 +3,76 @@ allow the hostel name to reduce size when the name is much
 centre the HomePage
 let the swtch toggle
 
+// Widget _buildCombinedChart() {
+  //   return Container(
+  //     height: 180,
+  //     child: LineChart(
+  //       LineChartData(
+  //         lineBarsData: [
+  //           LineChartBarData(
+  //             spots: [
+  //               FlSpot(0, statisticsData['number_of_tenants']?.toDouble() ?? 0),
+  //               FlSpot(1,
+  //                   statisticsData['number_rooms_occupied']?.toDouble() ?? 0),
+  //               FlSpot(
+  //                   2, statisticsData['total_bed_space_left']?.toDouble() ?? 0),
+  //             ],
+  //             isCurved: true,
+  //             belowBarData: BarAreaData(show: true),
+  //             color: const Color(0xFFF59B15),
+  //             dotData: const FlDotData(show: false),
+  //             isStrokeCapRound: true,
+  //             preventCurveOverShooting: true,
+  //             barWidth: 10,
+  //           ),
+  //         ],
+  //         titlesData: FlTitlesData(
+  //           leftTitles: const AxisTitles(
+  //             sideTitles: SideTitles(showTitles: true, reservedSize: 40),
+  //           ),
+  //           bottomTitles: AxisTitles(
+  //             sideTitles: SideTitles(
+  //               showTitles: true,
+  //               interval: 1,
+  //               reservedSize: 15,
+  //               getTitlesWidget: (double value, TitleMeta titleMeta) {
+  //                 return Text(
+  //                   '${_getBottomTitles(value.toInt())}',
+  //                   style: const TextStyle(
+  //                     fontSize: 13,
+  //                   ),
+  //                 );
+  //               },
+  //             ),
+  //           ),
+  //         ),
+  //         borderData: FlBorderData(
+  //           show: true,
+  //           border: const Border(
+  //             left: BorderSide(width: 1.0),
+  //             bottom: BorderSide(width: 1.0),
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
+  LineChartBarData _buildVerticalLine(String title, double x, double value) {
+    return LineChartBarData(
+      spots: [
+        FlSpot(x, 0),
+        FlSpot(x, value),
+      ],
+      isCurved: true,
+      belowBarData: BarAreaData(show: true),
+      color: const Color(0xFFF59B15),
+      dotData: const FlDotData(show: false),
+      isStrokeCapRound: true,
+      preventCurveOverShooting: true,
+      barWidth: 10,
+    );
+  }
 enabledBorder: const UnderlineInputBorder(
                                 borderSide: BorderSide(
                                   color: Color(0xFFF59B15),
