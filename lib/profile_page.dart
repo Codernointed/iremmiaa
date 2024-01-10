@@ -4,7 +4,7 @@ import 'package:bookmie/pages/income_stats.dart';
 import 'package:bookmie/pages/statistics_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:cached_network_image/cached_network_image.dart'; // Import the package
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:provider/provider.dart';
 import '/pages/edit_profile_page.dart';
 import '../Custom_classes/theme_provider.dart';
@@ -78,6 +78,7 @@ class _ProfilePageState extends State<ProfilePage> {
               children: [
                 _buildHeader(),
                 _buildStats(),
+                SizedBox(height: 10),
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -392,18 +393,64 @@ class _ProfilePageState extends State<ProfilePage> {
       width: double.infinity,
       height: 106,
       child: ListView(
-        padding: EdgeInsets.zero,
+        padding: EdgeInsets.symmetric(horizontal: 1),
         primary: false,
         shrinkWrap: true,
         scrollDirection: Axis.horizontal,
         children: [
-          _buildStatsItem(Icons.bed, numberOfRooms.toString(), 'Rooms'),
-          _buildStatsItem(Icons.supervisor_account_rounded,
-              numberOfTenants.toString(), 'Tenants'),
-          _buildStatsItem(Icons.door_back_door,
-              numberOfRoomsOccupied.toString(), 'Occupied'),
-          _buildStatsItem(Icons.grid_view_rounded, numberOfSpaceLeft.toString(),
-              'Space Left'),
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => StatisticsPage(
+                    accessToken: widget.accessToken,
+                  ),
+                ),
+              );
+            },
+            child:
+                _buildStatsItem(Icons.bed, numberOfRooms.toString(), 'Rooms'),
+          ),
+          GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => StatisticsPage(
+                      accessToken: widget.accessToken,
+                    ),
+                  ),
+                );
+              },
+              child: _buildStatsItem(Icons.supervisor_account_rounded,
+                  numberOfTenants.toString(), 'Tenants')),
+          GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => StatisticsPage(
+                      accessToken: widget.accessToken,
+                    ),
+                  ),
+                );
+              },
+              child: _buildStatsItem(Icons.door_back_door,
+                  numberOfRoomsOccupied.toString(), 'Occupied')),
+          GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => StatisticsPage(
+                      accessToken: widget.accessToken,
+                    ),
+                  ),
+                );
+              },
+              child: _buildStatsItem(Icons.grid_view_rounded,
+                  numberOfSpaceLeft.toString(), 'Space Left'))
         ],
       ),
     );
