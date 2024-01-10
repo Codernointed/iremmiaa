@@ -12,7 +12,7 @@ class HomePage extends StatelessWidget {
 
   Widget _buildCard(String text, String imageLoc) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+      padding: const EdgeInsets.fromLTRB(30, 15, 30, 15),
       child: Container(
         height: 110,
         decoration: BoxDecoration(
@@ -101,7 +101,7 @@ class HomePage extends StatelessWidget {
       body: SafeArea(
         child: ListView(
           children: [
-            const SizedBox(height: 20),
+            const SizedBox(height: 40),
             GestureDetector(
               onTap: () {
                 Navigator.push(
