@@ -174,100 +174,121 @@ class _VerifyTenantsPageState extends State<VerifyTenantsPage> {
   Future<void> verifyTenant(String? qrCode) async {
     final apiUrl = Uri.parse(
         'https://ethenatx.pythonanywhere.com/management/verify-tenant/');
-    final response = await http.post(
-      apiUrl,
-      headers: {
-        'Authorization': 'Bearer ${widget.accessToken}',
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode({'verification_code': qrCode}),
-    );
-
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text('Verification Successful'),
-            content: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Image.asset(
-                    'assets/Success.gif',
-                    width: 90,
-                    height: 90,
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Hostel: ${data['hostel_name']}'),
-                      Text('Room Number: ${data['room_number']}'),
-                      Text('Name: ${data['tenant_name']}'),
-                      Text('ID: ${data['student_id']}'),
-                      Text('Status: ${data['checked_in_status']}'),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            contentPadding: EdgeInsets.all(16),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  setState(() {
-                    isVerificationDialogShown = false;
-                  });
-                  Navigator.of(context).pop();
-                },
-                child: const Text('Close'),
-              ),
-            ],
-          );
+    try {
+      final response = await http.post(
+        apiUrl,
+        headers: {
+          'Authorization': 'Bearer ${widget.accessToken}',
+          'Content-Type': 'application/json; charset=UTF-8',
         },
+        body: jsonEncode({'verification_code': qrCode}),
       );
-    } else {
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: const Text('Verification Successful'),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Image.asset(
+                      'assets/Success.gif',
+                      width: 90,
+                      height: 90,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Hostel: ${data['hostel_name']}'),
+                        Text('Room Number: ${data['room_number']}'),
+                        Text('Name: ${data['tenant_name']}'),
+                        Text('ID: ${data['student_id']}'),
+                        Text('Status: ${data['checked_in_status']}'),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              contentPadding: EdgeInsets.all(16),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      isVerificationDialogShown = false;
+                    });
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Close'),
+                ),
+              ],
+            );
+          },
+        );
+      } else {
+        handleVerificationError(response);
+      }
+    } catch (e) {
+      handleVerificationError(null);
+    }
+  }
+
+  void handleVerificationError(http.Response? response) {
+    String errorMessage = 'Error';
+
+    if (response != null) {
       final data = json.decode(response.body);
-      String errorMessage = 'Error';
+
       if (response.statusCode == 401) {
         errorMessage = 'Tenant V-code has expired';
       } else if (response.statusCode == 404) {
         errorMessage = 'Tenant V-code not valid';
+      } else if (response.statusCode == 403) {
+        errorMessage = 'Portar is not verified';
+      } else if (response.statusCode == 400) {
+        errorMessage = 'Verification Error';
+        // Display the hostel name provided in the response
+        errorMessage += '\nHostel: ${data['message']}';
       }
-
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text(errorMessage),
-            content: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Image.asset(
-                    'assets/Error.gif',
-                    width: 60,
-                    height: 60,
-                  ),
-                  Text(data['message']),
-                ],
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  setState(() {
-                    isVerificationDialogShown = false;
-                  });
-                  Navigator.of(context).pop();
-                },
-                child: const Text('Close'),
-              ),
-            ],
-          );
-        },
-      );
     }
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(errorMessage),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset(
+                  'assets/Error.gif',
+                  width: 60,
+                  height: 60,
+                ),
+                if (response != null)
+                  Text(json.decode(response.body)['message'])
+                else
+                  const Text('Failed to verify tenant. Please try again.'),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  isVerificationDialogShown = false;
+                });
+                Navigator.of(context).pop();
+              },
+              child: const Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
