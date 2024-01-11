@@ -3,6 +3,18 @@ allow the hostel name to reduce size when the name is much
 centre the HomePage
 let the swtch toggle
 
+// Legend configuration
+                  legendOptions: LegendOptions(
+                    showLegendsInRow: false,
+                    legendPosition: LegendPosition.right,
+                    showLegends: true,
+                    legendTextStyle: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Colors.black,
+                    ),
+                    legendShape: BoxShape.circle, // Change to your preferred shape
+                    legendPadding: 8, // Adjust padding as needed
 // Widget _buildCombinedChart() {
   //   return Container(
   //     height: 180,
