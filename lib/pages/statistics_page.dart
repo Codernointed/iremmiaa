@@ -87,10 +87,9 @@ class _StatisticsPageState extends State<StatisticsPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // _buildCombinedChart(),
-                  // const SizedBox(height: 63),
+                  _buildCombinedChart(),
+                  const SizedBox(height: 63),
                   const SizedBox(height: 23),
-
                   _buildCircularProgressBars(),
                   const SizedBox(height: 63),
                   _buildPieChart(
@@ -253,7 +252,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
       case 0:
         return 'Tenants';
       case 1:
-        return 'Occ';
+        return 'Occupied';
       case 2:
         return 'Rooms';
       case 3:
@@ -266,94 +265,93 @@ class _StatisticsPageState extends State<StatisticsPage> {
   int touchedIndex = -1;
 
   Widget _buildPieChart(String title, Map<String, dynamic> data, {Key? key}) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 3),
-          Container(
-            height: 300,
-            key: key,
-            child: Stack(
-              alignment: Alignment.bottomCenter,
-              children: [
-                PieChart(
-                  PieChartData(
-                    pieTouchData: PieTouchData(
-                      touchCallback: (FlTouchEvent event, pieTouchResponse) {
-                        setState(() {
-                          if (!event.isInterestedForInteractions ||
-                              pieTouchResponse == null ||
-                              pieTouchResponse.touchedSection == null) {
-                            touchedIndex = -1;
-                            return;
-                          }
-                          touchedIndex = pieTouchResponse
-                              .touchedSection!.touchedSectionIndex;
-                        });
-                      },
-                    ),
-                    borderData: FlBorderData(
-                      show: false,
-                    ),
-                    sectionsSpace: 0,
-                    centerSpaceRadius: 40,
-                    sections: _getModifiedPieChartSections(data),
+    return Column(
+      children: [
+        Text(title,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 16),
+          child: Row(
+            children: [
+              // Pie Chart on the left
+              Expanded(
+                child: Container(
+                  height: 300,
+                  key: key,
+                  child: Stack(
+                    alignment: Alignment.bottomCenter,
+                    children: [
+                      PieChart(
+                        PieChartData(
+                          pieTouchData: PieTouchData(
+                            touchCallback:
+                                (FlTouchEvent event, pieTouchResponse) {
+                              setState(() {
+                                if (!event.isInterestedForInteractions ||
+                                    pieTouchResponse == null ||
+                                    pieTouchResponse.touchedSection == null) {
+                                  touchedIndex = -1;
+                                  return;
+                                }
+                                touchedIndex = pieTouchResponse
+                                    .touchedSection!.touchedSectionIndex;
+                              });
+                            },
+                          ),
+                          borderData: FlBorderData(
+                            show: false,
+                          ),
+                          sectionsSpace: 0,
+                          centerSpaceRadius: 40,
+                          sections: _getModifiedPieChartSections(data),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                _buildLegend(data),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildLegend(Map<String, dynamic> data) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            for (var entry in data.entries)
-              _buildLegendItem(
-                color: _getColorForIndex(entry.key.hashCode),
-                label: entry.key,
               ),
-          ],
+              SizedBox(
+                  width: 16), // Adjust spacing between pie chart and legend
+              // Legend items on the right
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: data.entries
+                    .map((entry) => _buildLegendItem(
+                          entry.key,
+                          entry.value,
+                          _getColorForIndex(
+                              data.keys.toList().indexOf(entry.key)),
+                        ))
+                    .toList(),
+              ),
+            ],
+          ),
         ),
-      ),
+      ],
     );
   }
 
-  Widget _buildLegendItem(
-      {required Color color, required String label, bool isSelected = false}) {
+  Widget _buildLegendItem(String type, dynamic value, Color color) {
     return Row(
       children: [
         Container(
-          width: 10,
-          height: 10,
+          width: 12,
+          height: 12,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: isSelected ? color.withOpacity(0.8) : color,
+            color: color,
           ),
-          margin: EdgeInsets.only(right: 5),
         ),
+        SizedBox(width: 4),
         Text(
-          label,
+          '$type: $value',
           style: TextStyle(
             fontSize: 14,
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
           ),
         ),
+        SizedBox(width: 12), // Adjust spacing between legend items as needed
       ],
     );
   }
@@ -447,6 +445,78 @@ class _StatisticsPageState extends State<StatisticsPage> {
           children: [Text("("), Text(sublabel), Text(")")],
         )
       ],
+    );
+  }
+
+  Widget _buildCombinedChart() {
+    return Container(
+      height: 180,
+      child: LineChart(
+        LineChartData(
+          lineBarsData: [
+            LineChartBarData(
+              spots: [
+                FlSpot(0, statisticsData['number_of_tenants']?.toDouble() ?? 0),
+                FlSpot(1,
+                    statisticsData['number_rooms_occupied']?.toDouble() ?? 0),
+                FlSpot(2, statisticsData['number_of_rooms']?.toDouble() ?? 0),
+                FlSpot(
+                    3, statisticsData['total_bed_space_left']?.toDouble() ?? 0),
+              ],
+              isCurved: true,
+              belowBarData: BarAreaData(show: true),
+              color: const Color(0xFFF59B15),
+              dotData: const FlDotData(show: false),
+              isStrokeCapRound: true,
+              preventCurveOverShooting: true,
+              barWidth: 5, // Adjust this value to control thickness
+            ),
+          ],
+          titlesData: FlTitlesData(
+            leftTitles: const AxisTitles(
+              sideTitles: SideTitles(showTitles: true, reservedSize: 40),
+            ),
+            bottomTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                interval: 1,
+                reservedSize: 15,
+                getTitlesWidget: (double value, TitleMeta titleMeta) {
+                  return Text(
+                    '${_getBottomTitles(value.toInt())}',
+                    style: const TextStyle(
+                      fontSize: 13,
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+          borderData: FlBorderData(
+            show: true,
+            border: const Border(
+              left: BorderSide(width: 1.0),
+              bottom: BorderSide(width: 1.0),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  LineChartBarData _buildVerticalLine(String title, double x, double value) {
+    return LineChartBarData(
+      spots: [
+        FlSpot(x, 0),
+        FlSpot(x, value),
+      ],
+      isCurved: true,
+      belowBarData: BarAreaData(show: true),
+      color: const Color(0xFFF59B15),
+      dotData: const FlDotData(show: false),
+      isStrokeCapRound: true,
+      preventCurveOverShooting: true,
+      barWidth: 1,
     );
   }
 }
