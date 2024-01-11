@@ -20,6 +20,8 @@ class RoomDetailsPage extends StatefulWidget {
 class _RoomDetailsPageState extends State<RoomDetailsPage> {
   String searchText = '';
   int selectedCapacity = 0;
+  int searchTenants = 0;
+  // String searchGender = '';
   bool showOccupiedOnly = false;
   bool isLoading = true;
 
@@ -70,25 +72,13 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
     );
   }
 
-  void searchTenants(String query) {
-    setState(() {
-      filteredRooms = rooms.where((room) {
-        final matchesSearch =
-            room.roomNo.toLowerCase().contains(query.toLowerCase());
-        final matchesTenants = room.noOfTenants.toString().contains(query);
-        final matchesGender =
-            room.gender.toLowerCase().contains(query.toLowerCase());
-
-        return matchesSearch || matchesTenants || matchesGender;
-      }).toList();
-    });
-  }
-
   void searchGender(String query) {
     setState(() {
       filteredRooms = rooms
-          .where(
-              (room) => room.gender.toLowerCase().contains(query.toLowerCase()))
+          .where((room) =>
+              room.gender.toLowerCase().contains(query.toLowerCase()) &&
+              (query.isEmpty ||
+                  room.gender.toLowerCase() == query.toLowerCase()))
           .toList();
     });
   }
@@ -101,8 +91,13 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
         final matchesCapacity =
             selectedCapacity == 0 || room.roomCapacity == selectedCapacity;
         final matchesOccupancy = !showOccupiedOnly || room.occupied;
+        final matchesTenants =
+            searchTenants == 0 || room.noOfTenants == searchTenants;
 
-        return matchesSearch && matchesCapacity && matchesOccupancy;
+        return matchesSearch &&
+            matchesCapacity &&
+            matchesOccupancy &&
+            matchesTenants;
       }).toList();
     });
   }
@@ -223,27 +218,45 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              ElevatedButton(
-                onPressed: () {
-                  showFilterDialog(
-                    'Filter by Tenants',
-                    'Enter number of tenants',
-                    (value) => searchTenants(value),
-                  );
+              DropdownButton<int>(
+                value: searchTenants,
+                onChanged: (value) {
+                  setState(() {
+                    searchTenants = value!;
+                    filterRooms();
+                  });
                 },
-                // style: ButtonStyle(
-                //     backgroundColor: Colors.),
-                child: const Text('Filter by Tenants'),
+                items: <DropdownMenuItem<int>>[
+                  const DropdownMenuItem<int>(
+                    value: 0,
+                    child: Text('Filter by Tenants'),
+                  ),
+                  for (var tenants
+                      in rooms.map((room) => room.noOfTenants).toSet())
+                    if (tenants != 0)
+                      DropdownMenuItem<int>(
+                        value: tenants,
+                        child: Text('$tenants'),
+                      ),
+                ],
               ),
-              ElevatedButton(
-                onPressed: () {
-                  showFilterDialog(
-                    'Filter by Gender',
-                    'Enter gender',
-                    (value) => searchGender(value),
-                  );
+              // Filter by Gender
+              DropdownButton<String>(
+                hint: Text('Filter by Gender'),
+                value: null,
+                onChanged: (value) {
+                  setState(() {
+                    searchGender(
+                        value ?? ''); // Pass an empty string for "All Genders"
+                  });
                 },
-                child: const Text('Filter by Gender'),
+                items: ['All Genders', 'male', 'female', 'open']
+                    .map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value == 'All Genders' ? '' : value,
+                    child: Text(value),
+                  );
+                }).toList(),
               ),
             ],
           ),
@@ -277,6 +290,7 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
               ),
           ],
         ),
+
         // Filter by Occupancy
         Row(
           children: [
@@ -300,7 +314,7 @@ class _RoomDetailsPageState extends State<RoomDetailsPage> {
     return GridView.builder(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        childAspectRatio: 0.7,
+        childAspectRatio: 0.63,
       ),
       itemCount: filteredRooms.isEmpty ? rooms.length : filteredRooms.length,
       shrinkWrap: true,
