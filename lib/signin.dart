@@ -1,9 +1,14 @@
 //signin page
 // ignore_for_file: use_build_context_synchronously, library_private_types_in_public_api
 
+import 'package:bookmie/Custom_classes/AccessTokenProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'Custom_classes/auth_service.dart';
+// import 'Custom_classes/auth_service.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:provider/provider.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'pages/home_page.dart';
 
 class AuthenticateSolo1Widget extends StatefulWidget {
@@ -22,95 +27,81 @@ class _AuthenticateSolo1WidgetState extends State<AuthenticateSolo1Widget>
   final passwordLoginController = TextEditingController();
   bool passwordLoginVisibility = true;
   bool isLoading = false;
+  final secureStorage = FlutterSecureStorage();
 
-  AuthService authService = AuthService();
+  // Function to log in and obtain an access token
+  Future<String?> logInAndGetAccessToken(String email, String password) async {
+    final apiUrl = Uri.parse(
+        'https://ethenatx.pythonanywhere.com/management/obtain-token/');
 
-  Future<void> handleLoginOrRefresh() async {
+    try {
+      final response = await http.post(apiUrl,
+          headers: {
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode({
+            'email': email,
+            'password': password,
+          }));
+
+      if (response.statusCode == 200) {
+        final jsonResponse = json.decode(response.body) as Map<String, dynamic>;
+        final accessToken = jsonResponse['access'];
+        print(accessToken);
+        return accessToken;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print('Error: $e');
+      return null;
+    }
+  }
+
+  // Function to handle login button press
+  Future<void> handleLogin() async {
     final email = emailAddressLoginController.text;
     final password = passwordLoginController.text;
 
-    setState(() => isLoading = true);
-
-    await authService.logInAndGetTokens(email, password);
-
-    if (authService.accessToken != null) {
-      // Successful login or refresh, do something with the access token
-      navigateToHomePage();
-    } else {
-      showSnackBar('Login Failed. Please check your credentials.');
-    }
-
-    setState(() => isLoading = false);
-  }
-
-  Future<void> handleLogin() async {
-    await handleLoginOrRefresh();
-
-    if (authService.accessToken != null) {
-      // showSnackBar('Login Successful!');
-      navigateToHomePage();
-    } else {
-      showSnackBar('Login Failed. Please check your credentials.');
-    }
-  }
-
-  void showSnackBar(String message) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(message)));
-  }
-
-  void navigateToHomePage() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => HomePage(accessToken: authService.accessToken!),
-      ),
-    );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      checkTokensAndNavigate();
+    setState(() {
+      isLoading = true;
     });
-  }
 
-  Future<void> checkTokensAndNavigate() async {
-    final accessToken =
-        await authService.secureStorage.read(key: 'access_token');
-    final refreshToken =
-        await authService.secureStorage.read(key: 'refresh_token');
+    final accessToken = await logInAndGetAccessToken(email, password);
 
-    print('Stored Access Token: $accessToken');
-    print('Stored Refresh Token: $refreshToken');
+    setState(() {
+      isLoading = false;
+    });
 
-    if (accessToken != null && refreshToken != null) {
-      // Tokens exist, attempt to refresh and navigate to home page
-      await handleLoginOrRefresh();
-      print('After Refresh - Access Token: ${authService.accessToken}');
-      if (authService.accessToken != null) {
-        navigateToHomePage();
-      } else {
-        // If refresh fails, show an error and offer a login option
-        showSnackBar('Token refresh failed. Please log in again.');
-      }
+    if (accessToken != null) {
+      // Use the AccessTokenProvider to set the access token
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => HomePage(
+            accessToken: accessToken,
+          ),
+        ),
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Login Successful!'),
+        ),
+      );
+
+      // Navigator.pushNamed(
+      //   context,
+      //   '/homepage',
+      // );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Login Failed. Please check your credentials.'),
+        ),
+      );
     }
   }
-  // Future<void> checkExistingTokens() async {
-  //   final accessToken =
-  //       await authService.secureStorage.read(key: 'access_token');
-  //   final refreshToken =
-  //       await authService.secureStorage.read(key: 'refresh_token');
-
-  //   if (accessToken != null && refreshToken != null) {
-  //     // Tokens exist, navigate to home page
-  //     await authService.logInAndGetTokens("", "", isRefresh: true);
-  //     if (authService.accessToken != null) {
-  //       navigateToHomePage();
-  //     }
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
