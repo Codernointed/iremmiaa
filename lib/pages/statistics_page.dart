@@ -344,11 +344,10 @@ class _StatisticsPageState extends State<StatisticsPage> {
         ),
         SizedBox(width: 4),
         Text(
-          '$type: $value',
+          '$type',
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.bold,
-            color: Colors.black,
           ),
         ),
         SizedBox(width: 12), // Adjust spacing between legend items as needed
@@ -404,7 +403,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
     double occupiedPercentage =
         (statisticsData['number_rooms_occupied'] ?? 0) / numberOfRooms;
     double spaceLeftPercentage =
-        (statisticsData['total_bed_space_left'] ?? 0) / 27;
+        (statisticsData['total_bed_space_left'] ?? 0) / 43;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
