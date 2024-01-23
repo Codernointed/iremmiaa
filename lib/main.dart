@@ -1,10 +1,11 @@
 //main.dart
 
+import 'package:bookmie/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'Custom_classes/theme_provider.dart';
-import 'signin.dart';
+// import 'signin.dart';
 
 void main() => runApp(ChangeNotifierProvider(
       create: (context) => ThemeProvider(),
@@ -39,7 +40,7 @@ class MyApp extends StatelessWidget {
         },
       ),
 
-      home: const AuthenticateSolo1Widget(),
+      home: const SplashScreen(),
     );
   }
 }
