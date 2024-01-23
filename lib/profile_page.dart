@@ -71,6 +71,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
         theme: Provider.of<ThemeProvider>(context).themeData,
         home: Scaffold(
           body: SingleChildScrollView(
